@@ -15,7 +15,8 @@ const AsyncFunction = (async function () {}).constructor;
 function isBuiltIn( t ) {
   if ( t == null ) return false;
   return (
-       ( t instanceof Date    )
+       ( t.__IS_PREVENTED_UNDEFINED__ )
+    || ( t instanceof Date    )
     || ( t instanceof Number  )
     || ( t instanceof BigInt  )
     // || ( t instanceof Math    )
@@ -59,8 +60,12 @@ export function preventUndefined(argTarget, argState){
     const currHandler = {
       get(...args) {
         const [target, prop, receiver] = args;
-        if ( prop === '__UNPREVENT__' )
+        if ( prop === '__UNPREVENT__' ) {
           return currTarget;
+        }
+        if ( prop === '__IS_PREVENTED_UNDEFINED__' ) {
+          return true;
+        }
 
         const nextTarget = Reflect.get(...arguments);
 
