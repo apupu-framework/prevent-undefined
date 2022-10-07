@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": " NODE_OPTIONS=--experimental-vm-modules jest  --watch-all --no-colors"
+    "test-es6": " NODE_OPTIONS=--experimental-vm-modules jest  --watch-all --no-colors index.test.js",
+    "test" : "                                        jest  --watch-all --no-colors common.test.js"
   },
   "author": {
     "name" : "Atsushi Oka",

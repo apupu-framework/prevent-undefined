@@ -10,6 +10,40 @@ function searchRootState( currState ) {
   }
 }
 
+
+const AsyncFunction = (async function () {}).constructor;
+function isBuiltIn( t ) {
+  if ( t == null ) return false;
+  return (
+       ( t instanceof Date    )
+    || ( t instanceof Number  )
+    || ( t instanceof BigInt  )
+    // || ( t instanceof Math    )
+    || ( t instanceof String  )
+    || ( t instanceof Boolean )
+    || ( t instanceof RegExp  )
+    || ( t instanceof Symbol  )
+    || ( t instanceof Error   )
+    || ( t instanceof Map     )
+    || ( t instanceof Set     )
+    || ( t instanceof WeakMap )
+    || ( t instanceof WeakSet )
+    || ( t instanceof ArrayBuffer )
+    || ( t instanceof SharedArrayBuffer )
+    // || ( t instanceof Atomics )
+    || ( t instanceof DataView )
+    // || ( t instanceof JSON )
+    || ( t instanceof Promise )
+    // || ( t instanceof Generator )
+    // || ( t instanceof GeneratorFunction )
+    // || ( t instanceof AsyncFunction )
+    // || ( t instanceof AsyncGenerator )
+    // || ( t instanceof AsyncGeneratorFunction )
+    // || ( t instanceof Reflect )
+    // || ( t instanceof Proxy )
+  );
+};
+
 module.exports.preventUndefined = function preventUndefined(argTarget, argState){
   const currTarget = argTarget;
   const currState = {
@@ -21,10 +55,12 @@ module.exports.preventUndefined = function preventUndefined(argTarget, argState)
     ...argState,
   };
 
-  if (( typeof currTarget === 'object') && currTarget !== null ) {
+  if (( typeof currTarget === 'object') && currTarget !== null && ( ! isBuiltIn( currTarget ) ) ) {
     const currHandler = {
       get(...args) {
         const [target, prop, receiver] = args;
+        if ( prop === '__UNPREVENT__' )
+          return currTarget;
 
         const nextTarget = Reflect.get(...arguments);
 
@@ -64,5 +100,6 @@ module.exports.undefinedlessFunction = function undefinedlessFunction( fn ) {
       const __args = args.map( (e)=>preventUndefined(e) );
       return preventUndefined( fn.apply( this, __args ) );
     };
-  `)(fn,preventUndefined);
+  `)(fn,module.exports.preventUndefined);
 }
+

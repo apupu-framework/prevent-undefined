@@ -1,6 +1,5 @@
 
-import { preventUndefined, undefinedlessFunction } from './index.js' ;
-
+const { preventUndefined, undefinedlessFunction } = require( './common.js' );
 
 class PruError extends ReferenceError {
   constructor(message ) {
