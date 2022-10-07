@@ -7,6 +7,9 @@
   "scripts": {
     "test": " NODE_OPTIONS=--experimental-vm-modules jest  --watch-all --no-colors"
   },
-  "author": "Atsushi Oka",
+  "author": {
+    "name" : "Atsushi Oka",
+    "url":  "https://github.com/a-oka-z/prevent-undefined"
+  },
   "license": "ISC"
 }

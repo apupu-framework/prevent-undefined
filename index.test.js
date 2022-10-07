@@ -21,6 +21,7 @@ test( '', ()=>{
       }
     }
   };
+preventUndefined( __foo ).hello.world.foo.bar.buz
   expect(()=> preventUndefined( __foo ).hello.world.foo.bar.buz ).toThrow();
 });
 
