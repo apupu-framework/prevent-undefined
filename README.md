@@ -6,6 +6,8 @@
 It also displays dump of the refered object for your convenience. See below :
 
 ```
+import { preventUndefined } from "prevent-undefined";
+
 // foo.js
   const someObj = {
     hello : {
@@ -31,6 +33,12 @@ ReferenceError: obj.hello.world.foo.bar.buz is not defined in {
   }
 }
 ```
+
+In case you prefer CommonJS modules, 
+```
+const {preventUndefined} = require("prevent-undefined/common.js");
+```
+
 
 That's all.
 
