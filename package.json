@@ -1,6 +1,6 @@
 {
   "name": "prevent-undefined",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "prevent-undefined makes objects to throw errors when any code refers an undefined propery on it.",
   "main": "index.js",
   "type": "module",
