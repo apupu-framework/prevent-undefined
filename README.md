@@ -38,7 +38,9 @@ ReferenceError: obj.hello.world.foo.bar.VAZ is not defined in {
 }
 ```
 
-#### Unprevent ####
+ Unprevent 
+--------------------------------------------------------------------------------
+
 
 Sometimes, you will want to unprevent your objects especially when you want to
 use [optional chaining][]:
