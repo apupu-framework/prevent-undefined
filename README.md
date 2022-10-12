@@ -6,6 +6,8 @@
 It also displays dump of the refered object for your convenience. See below :
 
 ```
+const  { preventUndefined } = require("prevent-undefined/common.js");
+// or
 import { preventUndefined } from "prevent-undefined";
 
 // foo.js
@@ -14,30 +16,81 @@ import { preventUndefined } from "prevent-undefined";
       world : {
         foo : {
           bar : {
-            muz : "HELLO",
+            baz : "HELLO",
           },
         }
       }
     }
   };
 
-  preventUndefined( someObj ).hello.world.foo.bar.buz;
+  preventUndefined( someObj ).hello.world.foo.bar.VAZ;
   //                                 SOME TYPO    ^^^
 ```
 
+then, you'll get:
+
 ```
 > node foo.js
-ReferenceError: obj.hello.world.foo.bar.buz is not defined in {
+ReferenceError: obj.hello.world.foo.bar.VAZ is not defined in {
   hello: {
-    world: { foo: { bar: { muz: 'HELLO' } } }
+    world: { foo: { bar: { baz: 'HELLO' } } }
   }
 }
 ```
 
-In case you prefer CommonJS modules, 
+#### Unprevent ####
+
+Sometimes, you will want to unprevent your objects especially when you want to
+use [optional chaining][]:
+
 ```
-const {preventUndefined} = require("prevent-undefined/common.js");
+const { preventUndefined } = require('./common.js');
+const someObj = {
+  hello : {
+    world : {
+      foo : {
+        bar : {
+          baz : {
+            message : "HELLO",
+          }
+        },
+      }
+    }
+  }
+};
+const o = preventUndefined( someObj );
+
+function proc(o){
+  return o.hello?.world?.foo?.bar?.baz?.value ?? "hello world";
+}
+proc(o);
 ```
+you'll get
+
+```
+ReferenceError: obj.hello.world.foo.bar.baz.value is not defined in {
+  hello: {
+    world: {
+      foo: { bar: { baz: { message: 'HELLO' } } }
+    }
+  }
+}
+    at Object.get (/.../common.js:91:17)
+```
+
+which you definitely don't want.
+
+Use `unprevent()`
+
+```
+function proc(o){
+  o=unprevent(o);
+  return o.hello?.world?.foo?.bar?.baz?.value ?? "hello world";
+}
+proc(o); // you get "hello world" as expected.
+```
+
+[optional chaining]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining
 
 
 That's all.
