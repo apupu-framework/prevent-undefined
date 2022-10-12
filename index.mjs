@@ -1,6 +1,8 @@
 'use strict'
 
-import * as util from 'util';
+function inspect(s) {
+  return JSON.stringify( s );
+}
 
 function searchRootState( currState ) {
   if ( currState.isRootState ) {
@@ -79,10 +81,7 @@ export function preventUndefined(argTarget, argState){
 
         if ( ( typeof nextTarget === 'undefined') && ! currState.excludes( prop ) ) {
 
-          const dump = util.inspect(  searchRootState( currState ).currTarget, {
-            depth:null,
-            colors:true,
-          });
+          const dump = inspect(  searchRootState( currState ).currTarget );
           const propPathStr = 'obj.' + nextState.propPath.join('.') ;
           // console.error( propPathStr , 'is not defined in' , dump );
           throw new ReferenceError( propPathStr + ' is not defined in ' + dump );

@@ -1,6 +1,12 @@
 'use strict'
 
-const util = require( 'util' );
+const util = require('util');
+function inspect(s) {
+  return util.inspect( s, {
+    depth:null,
+    colors:true,
+  });
+}
 
 function searchRootState( currState ) {
   if ( currState.isRootState ) {
@@ -79,10 +85,7 @@ module.exports.preventUndefined = function preventUndefined(argTarget, argState)
 
         if ( ( typeof nextTarget === 'undefined') && ! currState.excludes( prop ) ) {
 
-          const dump = util.inspect(  searchRootState( currState ).currTarget, {
-            depth:null,
-            colors:true,
-          });
+          const dump = inspect(  searchRootState( currState ).currTarget );
           const propPathStr = 'obj.' + nextState.propPath.join('.') ;
           // console.error( propPathStr , 'is not defined in' , dump );
           throw new ReferenceError( propPathStr + ' is not defined in ' + dump );
