@@ -98,6 +98,14 @@ export function preventUndefined(argTarget, argState){
   }
 }
 
+export function unprevent(o) {
+  if ( o.__IS_PREVENTED_UNDEFINED__ ) {
+    return unprevent( o.__UNPREVENT__ );
+  } else {
+    return o;
+  }
+}
+
 export function undefinedlessFunction( fn ) {
   return new Function( 'fn','preventUndefined', `
     return function ${fn.name}Wrapper(...args) {
