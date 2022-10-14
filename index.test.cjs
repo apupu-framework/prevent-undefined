@@ -1,5 +1,5 @@
 
-const { preventUndefined, undefinedlessFunction } = require( './common.js' );
+const { preventUndefined, undefinedlessFunction } = require( './index.cjs' );
 
 class PruError extends ReferenceError {
   constructor(message ) {

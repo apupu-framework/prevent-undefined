@@ -6,7 +6,7 @@
 It also displays dump of the refered object for your convenience. See below :
 
 ```
-const  { preventundefined } = require("prevent-undefined/common.js");
+const  { preventundefined } = require("prevent-undefined" );
 // or
 import { preventUndefined } from "prevent-undefined";
 
@@ -96,6 +96,21 @@ proc(o); // you'll get "hello world" as expected.
 [optional chaining]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining
 
 
-That's all.
+ History 
+--------------------------------------------------------------------------------
+
+#### v0.2.6 ####
+This didn't work; it didn't support common.js.
+
+#### v0.2.7 ####
+(may) supports both common.js and es6 module.
+
+Special thanks goes to [How to Create a Hybrid NPM Module for ESM and CommonJS.](https://www.sensedeep.com/blog/posts/2021/how-to-create-single-source-npm-module.html)
+This site helped a lot. Thank you very much.
+
+
+ Conclusion
+--------------------------------------------------------------------------------
+That's all. Thank you very much.
 
 

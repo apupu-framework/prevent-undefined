@@ -1,12 +1,26 @@
 {
   "name": "prevent-undefined",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "prevent-undefined makes objects to throw errors when any code refers an undefined propery on it.",
   "main": "index.mjs",
-  "type": "module",
+  "type" :"module",
+  "exports": {
+    "./common.js": {
+      "default": "./index.cjs"
+    },
+    "." : {
+      "import":  "./index.mjs",
+      "require": "./index.cjs"
+    }
+  },
   "scripts": {
-    "test-es6"    : "NODE_OPTIONS='--experimental-vm-modules' jest  --watch-all index.test.js",
-    "test"        : "                                         jest  --watch-all common.test.js"
+    "test-es6"    : "NODE_OPTIONS='--experimental-vm-modules' jest  --watch-all index.test.mjs",
+    "test"        : "                                         jest  --watch-all index.test.cjs"
+  },
+  "jest" : {
+    "moduleFileExtensions":["js", "mjs", "cjs", "jsx", "ts", "tsx", "json", "node" ],
+    "testMatch":["**/*.[cm]js"],
+    "verbose":true
   },
   "author": {
     "name" : "Atsushi Oka",
