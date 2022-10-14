@@ -1,5 +1,5 @@
 
-import { preventUndefined, undefinedlessFunction } from './index.js' ;
+import { preventUndefined, undefinedlessFunction } from './index.mjs' ;
 
 
 class PruError extends ReferenceError {

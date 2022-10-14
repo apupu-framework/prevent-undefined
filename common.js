@@ -4,7 +4,7 @@ const util = require('util');
 function inspect(s) {
   return util.inspect( s, {
     depth:null,
-    colors:true,
+    // colors:true,
   });
 }
 
@@ -85,10 +85,13 @@ module.exports.preventUndefined = function preventUndefined(argTarget, argState)
 
         if ( ( typeof nextTarget === 'undefined') && ! currState.excludes( prop ) ) {
 
-          const dump = inspect(  searchRootState( currState ).currTarget );
+          const targetObject = searchRootState( currState ).currTarget;
+          const dump = inspect( targetObject );
           const propPathStr = 'obj.' + nextState.propPath.join('.') ;
           // console.error( propPathStr , 'is not defined in' , dump );
-          throw new ReferenceError( propPathStr + ' is not defined in ' + dump );
+          const err = new ReferenceError( propPathStr + ' is not defined in ' + dump );
+          err.targetObject =  targetObject;
+          throw err;
         } else {
           return preventUndefined( nextTarget, nextState );
         }
