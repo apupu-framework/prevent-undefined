@@ -106,7 +106,7 @@ module.exports.preventUndefined = function preventUndefined(argTarget, argState)
 }
 
 module.exports.unprevent = function unprevent(o) {
-  if ( o.__IS_PREVENTED_UNDEFINED__ ) {
+  if ( o && o.__IS_PREVENTED_UNDEFINED__ ) {
     return unprevent( o.__UNPREVENT__ );
   } else {
     return o;

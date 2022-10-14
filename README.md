@@ -108,6 +108,17 @@ This didn't work; it didn't support common.js.
 Special thanks goes to [How to Create a Hybrid NPM Module for ESM and CommonJS.](https://www.sensedeep.com/blog/posts/2021/how-to-create-single-source-npm-module.html)
 This site helped a lot. Thank you very much.
 
+#### v0.2.8 ####
+(Fri, 14 Oct 2022 19:53:18 +0900)
+
+Supported unpreventing null
+```
+unprevent( null ) == null
+```
+
+
+
+
 
  Conclusion
 --------------------------------------------------------------------------------
