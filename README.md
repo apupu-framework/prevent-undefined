@@ -116,8 +116,8 @@ Supported unpreventing null
 unprevent( null ) == null
 ```
 
-
-
+#### v0.2.9 ####
+Fixed an issue that it throws TypeError when a symbol property is accessed.
 
 
  Conclusion

@@ -83,7 +83,7 @@ export function preventUndefined(argTarget, argState){
 
           const targetObject = searchRootState( currState ).currTarget;
           const dump = inspect( targetObject );
-          const propPathStr = 'obj.' + nextState.propPath.join('.') ;
+          const propPathStr = 'obj.' + nextState.propPath.map(e=>e!=null?e.toString():'(null)').join('.');
           // console.error( propPathStr , 'is not defined in' , dump );
           const err = new ReferenceError( propPathStr + ' is not defined in ' + dump );
           err.targetObject =  targetObject;
