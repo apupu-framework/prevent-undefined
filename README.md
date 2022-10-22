@@ -119,6 +119,10 @@ unprevent( null ) == null
 #### v0.2.9 ####
 Fixed an issue that it throws TypeError when a symbol property is accessed.
 
+#### v0.2.10 ####
+Added keywords to ignore such as toJSON, `Symbol.toStringTag`,
+`Symbol.toPrimitive` , etc.
+
 
  Conclusion
 --------------------------------------------------------------------------------
