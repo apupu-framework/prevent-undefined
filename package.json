@@ -15,11 +15,12 @@
   },
   "scripts": {
     "test-es6"    : "NODE_OPTIONS='--experimental-vm-modules' jest  --watch-all index.test.mjs",
-    "test"        : "                                         jest  --watch-all index.test.cjs"
+    "test"        : "                                         jest  --watch-all index.test.cjs",
+    "make"        : "node ./make.js"
   },
   "jest" : {
     "moduleFileExtensions":["js", "mjs", "cjs", "jsx", "ts", "tsx", "json", "node" ],
-    "testMatch":["**/*.[cm]js"],
+    "testMatch":["**/*.test.[cm]js"],
     "verbose":true
   },
   "author": {

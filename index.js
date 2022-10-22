@@ -1,13 +1,3 @@
-'use strict'
-
-const util = require('util');
-function inspect(s) {
-  return util.inspect( s, {
-    depth:null,
-    // colors:true,
-  });
-}
-
 
 function searchRootState( currState ) {
   if ( currState.isRootState ) {
@@ -147,8 +137,3 @@ function undefinedlessFunction( fn ) {
   `)(fn,module.exports.preventUndefined);
 }
 
-
-
-module.exports.preventUndefined      = preventUndefined;
-module.exports.undefinedlessFunction = undefinedlessFunction;
-module.exports.unprevent = unprevent;

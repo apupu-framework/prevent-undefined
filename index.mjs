@@ -4,6 +4,11 @@ function inspect(s) {
   return JSON.stringify( s );
 }
 
+
+
+
+
+
 function searchRootState( currState ) {
   if ( currState.isRootState ) {
     return currState;
@@ -47,7 +52,7 @@ function isBuiltIn( t ) {
   );
 };
 
-export function preventUndefined(argTarget, argState){
+function preventUndefined(argTarget, argState){
   const currTarget = argTarget;
   const currState = {
     isRootState:true,
@@ -125,7 +130,7 @@ export function preventUndefined(argTarget, argState){
   }
 }
 
-module.exports.unprevent = function unprevent(o) {
+function unprevent(o) {
   if ( o && o.__IS_PREVENTED_UNDEFINED__ ) {
     return unprevent( o.__UNPREVENT__ );
   } else {
@@ -133,12 +138,19 @@ module.exports.unprevent = function unprevent(o) {
   }
 }
 
-export function undefinedlessFunction( fn ) {
+function undefinedlessFunction( fn ) {
   return new Function( 'fn','preventUndefined', `
     return function ${fn.name}Wrapper(...args) {
       const __args = args.map( (e)=>preventUndefined(e) );
       return preventUndefined( fn.apply( this, __args ) );
     };
-  `)(fn, preventUndefined );
+  `)(fn,module.exports.preventUndefined);
 }
 
+
+
+export {
+  preventUndefined ,
+  undefinedlessFunction ,
+  unprevent = unprevent
+};
