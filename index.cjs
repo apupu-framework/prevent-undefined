@@ -58,7 +58,19 @@ module.exports.preventUndefined = function preventUndefined(argTarget, argState)
     parentState : null,
     currTarget  : currTarget,
     propPath : [],
-    excludes : (n)=>0<=[ 'toJSON', 'toPostgres','then' ].indexOf(n),
+
+    /* 
+     * toJSON
+     * SEE https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toJSON
+     *
+     * toStringTag (Wed, 19 Oct 2022 10:55:58 +0900)
+     * SEE      https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toStringTag
+     * SEE ALSO https://dev.to/cherif_b/using-javascript-tostringtag-for-objects-types-description-15hc
+     *
+     * toPrimitive (Wed, 19 Oct 2022 13:29:20 +0900)
+     * SEE https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toPrimitive
+     */
+    excludes : (n)=>0<=[ 'toJSON', 'toPostgres', 'then', Symbol.toStringTag, Symbol.toPrimitive ].indexOf(n),
     ...argState,
   };
 
@@ -90,7 +102,19 @@ module.exports.preventUndefined = function preventUndefined(argTarget, argState)
           const propPathStr = 'obj.' + nextState.propPath.map(e=>e!=null?e.toString():'(null)').join('.');
           // console.error( propPathStr , 'is not defined in' , dump );
           const err = new ReferenceError( propPathStr + ' is not defined in ' + dump );
-          err.targetObject =  targetObject;
+          // err.targetObject =  targetObject;
+
+          /**
+           * (Fri, 21 Oct 2022 14:37:14 +0900)
+           *
+           * This is a countermeasure for the way  jest shows stacktraces; jest
+           * tries to hide its own stacktrace. This behavior makes it extremely
+           * difficult to tell a problem comes from jest itsown or others.
+           *
+           * We have to show the current stacktrace before jest hides it.
+           */
+          console.error( err );
+
           throw err;
         } else {
           return preventUndefined( nextTarget, nextState );
