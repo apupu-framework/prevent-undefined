@@ -123,6 +123,14 @@ Fixed an issue that it throws TypeError when a symbol property is accessed.
 Added keywords to ignore such as toJSON, `Symbol.toStringTag`,
 `Symbol.toPrimitive` , etc.
 
+#### v0.2.11 ####
+Added `$$typeof` to the ignore keyword list to let `prevent-undefined` work
+cooperatively  with `React.js`.
+
+This very informative article [Why Do React Elements Have a $$typeof Property?][$$typeof] 
+helped me to understand the problem. Thank you very much.
+
+[$$typeof]: https://overreacted.io/why-do-react-elements-have-typeof-property/ 
 
  Conclusion
 --------------------------------------------------------------------------------

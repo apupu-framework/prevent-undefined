@@ -42,6 +42,20 @@ function isBuiltIn( t ) {
   );
 };
 
+/* 
+ * toJSON
+ * SEE https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toJSON
+ *
+ * toStringTag (Wed, 19 Oct 2022 10:55:58 +0900)
+ * SEE      https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toStringTag
+ * SEE ALSO https://dev.to/cherif_b/using-javascript-tostringtag-for-objects-types-description-15hc
+ *
+ * toPrimitive (Wed, 19 Oct 2022 13:29:20 +0900)
+ * SEE https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toPrimitive
+ *
+ * $$typeof  (Mon, 24 Oct 2022 15:32:46 +0900)
+ * SEE https://overreacted.io/why-do-react-elements-have-typeof-property/
+ */
 const      IGNORING_KEYWORDS = [ 'toJSON', 'toPostgres', 'then', Symbol.toStringTag, Symbol.toPrimitive ];
 const JEST_IGNORING_KEYWORDS = [ 'toJSON', 'toPostgres', 'then', Symbol.toStringTag, Symbol.toPrimitive, 'stack','message','cause' ];
 
@@ -53,17 +67,6 @@ function preventUndefined(argTarget, argState){
     currTarget  : currTarget,
     propPath : [],
 
-    /* 
-     * toJSON
-     * SEE https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toJSON
-     *
-     * toStringTag (Wed, 19 Oct 2022 10:55:58 +0900)
-     * SEE      https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toStringTag
-     * SEE ALSO https://dev.to/cherif_b/using-javascript-tostringtag-for-objects-types-description-15hc
-     *
-     * toPrimitive (Wed, 19 Oct 2022 13:29:20 +0900)
-     * SEE https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toPrimitive
-     */
     excludes : (n)=>{
       const stack = new Error().stack.trim().split('\n');
       // console.error('stack',stack); 
