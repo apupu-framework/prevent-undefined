@@ -1,6 +1,6 @@
 {
   "name": "prevent-undefined",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "description": "prevent-undefined makes objects to throw errors when any code refers an undefined propery on it.",
   "main": "index.mjs",
   "type": "module",
@@ -14,8 +14,9 @@
     }
   },
   "scripts": {
-    "test-es6": "NODE_OPTIONS='--experimental-vm-modules' jest  --watch-all index.test.mjs",
-    "test": "                                         jest  --watch-all index.test.cjs",
+    "test-es6": "NODE_OPTIONS='--experimental-vm-modules' jest index.test.mjs",
+    "test-cs": "                                          jest index.test.cjs",
+    "test": "npm run test-cs; npm run test-es6",
     "make": "node ./make.js"
   },
   "jest": {

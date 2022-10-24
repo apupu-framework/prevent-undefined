@@ -56,8 +56,23 @@ function isBuiltIn( t ) {
  * $$typeof  (Mon, 24 Oct 2022 15:32:46 +0900)
  * SEE https://overreacted.io/why-do-react-elements-have-typeof-property/
  */
-const      IGNORING_KEYWORDS = [ 'toJSON', 'toPostgres', 'then', Symbol.toStringTag, Symbol.toPrimitive, '$$typeof' ];
-const JEST_IGNORING_KEYWORDS = [ 'toJSON', 'toPostgres', 'then', Symbol.toStringTag, Symbol.toPrimitive, 'stack','message','cause' ];
+const STANDARD_SYMBOLS = [
+    Symbol.asyncIterator
+  , Symbol.hasInstance
+  , Symbol.isConcatSpreadable
+  , Symbol.iterator
+  , Symbol.match
+  , Symbol.matchAll
+  , Symbol.replace
+  , Symbol.search
+  , Symbol.species
+  , Symbol.split
+  , Symbol.toPrimitive
+  , Symbol.toStringTag
+  , Symbol.unscopables
+];
+const      IGNORING_KEYWORDS = [ ...STANDARD_SYMBOLS, 'toJSON', 'toPostgres', 'then', '$$typeof' ];
+const JEST_IGNORING_KEYWORDS = [ ...STANDARD_SYMBOLS, 'toJSON', 'toPostgres', 'then', 'stack','message','cause' ];
 
 function preventUndefined(argTarget, argState){
   const currTarget = argTarget;

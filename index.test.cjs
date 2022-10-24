@@ -1,12 +1,4 @@
-
 const { preventUndefined, undefinedlessFunction } = require( './index.cjs' );
-
-class PruError extends ReferenceError {
-  constructor(message ) {
-    super(message);
-  }
-}
-
 
 test( '', ()=>{
   const __foo = {
@@ -129,6 +121,50 @@ test( 'Wrapping function (arg0) ... 3' , ()=>{
 
   expect( ()=>result.barr ).toThrow();
 });
+
+
+test( 'check ignore list `then` (for `Promise`)' , ()=>{
+  const __foo = {
+    hello : {
+      [Symbol.search]: true,
+    }
+  };
+  expect(()=> preventUndefined( __foo ).hello['toPostgres'] === true ).not.toThrow();
+});
+
+
+test( 'check ignore list `Symbol.search`' , ()=>{
+  const __foo = {
+    hello : {
+      [Symbol.search]: true,
+    }
+  };
+  expect(()=> preventUndefined( __foo ).hello[Symbol.search]===true ).not.toThrow();
+});
+
+test( 'check ignore list `$$typeof` (for React.js)' , ()=>{
+  const __foo = {
+    hello : {
+      [Symbol.search]: true,
+    }
+  };
+  expect(()=> preventUndefined( __foo ).hello['$$typeof'] === true ).not.toThrow();
+});
+
+
+test( 'check ignore list `toPostgres` (for `node-postgres`)' , ()=>{
+  const __foo = {
+    hello : {
+      [Symbol.search]: true,
+    }
+  };
+  expect(()=> preventUndefined( __foo ).hello['toPostgres'] === true ).not.toThrow();
+});
+
+
+
+
+
 
 
 

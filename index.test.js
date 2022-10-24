@@ -1,5 +1,3 @@
-import { preventUndefined, undefinedlessFunction } from './index.mjs' ;
-
 test( '', ()=>{
   const __foo = {
     hello : {
