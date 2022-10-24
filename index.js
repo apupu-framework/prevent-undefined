@@ -56,23 +56,35 @@ function isBuiltIn( t ) {
  * $$typeof  (Mon, 24 Oct 2022 15:32:46 +0900)
  * SEE https://overreacted.io/why-do-react-elements-have-typeof-property/
  */
-const STANDARD_SYMBOLS = [
-    Symbol.asyncIterator
-  , Symbol.hasInstance
-  , Symbol.isConcatSpreadable
-  , Symbol.iterator
-  , Symbol.match
-  , Symbol.matchAll
-  , Symbol.replace
-  , Symbol.search
-  , Symbol.species
-  , Symbol.split
-  , Symbol.toPrimitive
-  , Symbol.toStringTag
-  , Symbol.unscopables
-];
-const      IGNORING_KEYWORDS = [ ...STANDARD_SYMBOLS, 'toJSON', 'toPostgres', 'then', '$$typeof' ];
-const JEST_IGNORING_KEYWORDS = [ ...STANDARD_SYMBOLS, 'toJSON', 'toPostgres', 'then', 'stack','message','cause' ];
+
+function isOneOfWellKnownSymbols(n) {
+  /*
+   * (Mon, 24 Oct 2022 17:08:47 +0900)
+   * This should be local variable; Sometimes symbos are replaced with other
+   */
+  const WELL_KNOWN_SYMBOLS = [
+      Symbol.asyncIterator
+    , Symbol.hasInstance
+    , Symbol.isConcatSpreadable
+    , Symbol.iterator
+    , Symbol.match
+    , Symbol.matchAll
+    , Symbol.replace
+    , Symbol.search
+    , Symbol.species
+    , Symbol.split
+    , Symbol.toPrimitive
+    , Symbol.toStringTag
+    , Symbol.unscopables
+  ];
+  if ( typeof n === 'symbol' ) return true;
+  return 0<=WELL_KNOWN_SYMBOLS.indexOf(n);
+}
+
+const      IGNORING_KEYWORDS = [ 'toJSON', 'toPostgres', 'then', '$$typeof' ];
+const JEST_IGNORING_KEYWORDS = [ 'toJSON', 'toPostgres', 'then', 'stack','message','cause' ];
+
+console.error('isOneOfWellKnownSymbols( Symbol.iterator ) ',  isOneOfWellKnownSymbols( Symbol.iterator )  );
 
 function preventUndefined(argTarget, argState){
   const currTarget = argTarget;
@@ -92,9 +104,9 @@ function preventUndefined(argTarget, argState){
           ( 0<=stack[3].search( /node_modules.pretty/ ) ) :
           false;
       if ( isProblematicModule ) {
-        return 0<=JEST_IGNORING_KEYWORDS.indexOf(n);
+        return isOneOfWellKnownSymbols(n) || 0<=JEST_IGNORING_KEYWORDS.indexOf(n);
       } else {
-        return 0<=     IGNORING_KEYWORDS.indexOf(n);
+        return isOneOfWellKnownSymbols(n) || 0<=     IGNORING_KEYWORDS.indexOf(n);
       }
     },
     ...argState,

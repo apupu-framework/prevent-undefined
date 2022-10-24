@@ -16,7 +16,7 @@
   "scripts": {
     "test-es6": "NODE_OPTIONS='--experimental-vm-modules' jest index.test.mjs",
     "test-cs": "                                          jest index.test.cjs",
-    "test": "npm run test-cs; npm run test-es6",
+    "test": "npm run make; npm run test-cs; npm run test-es6",
     "make": "node ./make.js"
   },
   "jest": {

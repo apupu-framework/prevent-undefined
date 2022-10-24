@@ -145,14 +145,16 @@ In the version `v0.2.11`, I documented, commented, and tested it without
 modifying the actual code.  Believe me, this time I actually modified.
 
 #### v0.2.15 ####
-- Added standard well-known symbols to ignore list; since they are likely to be checked as
+- Added standard well-known symbols to ignore list; they are to added since
+  they are likely to be checked as 
 ```
 const i = a[Symbol.iterator];
 if (i === undefined ) {
   // ...
 }
 ```
-which is not a preferable behavior for this module.
+
+  which is not a preferable behavior for this module.
 
 - Applied automated code generation for tests.
 
