@@ -160,6 +160,15 @@ test( 'check ignore list `toPostgres` (for `node-postgres`)' , ()=>{
 });
 
 
+test( 'check ignore list `@@iterator` (for `React.js`)' , ()=>{
+  const __foo = {
+    hello : {
+      ['@@iterator']: true,
+    }
+  };
+  expect(()=> preventUndefined( __foo ).hello['@@iterator'] === true ).not.toThrow();
+});
+
 
 
 

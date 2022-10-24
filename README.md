@@ -162,6 +162,12 @@ if (i === undefined ) {
 #### v0.2.16 ####
 Changed the way to check if the object is a symbol or not.
 
+#### v0.2.17 ####
+(Mon, 24 Oct 2022 17:40:53 +0900)
+
+Added '@@iterator' to the ignore list in order to avoid an issue that will
+occur when use this module with `React.js`.
+
 
 
  Conclusion

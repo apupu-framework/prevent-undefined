@@ -91,7 +91,7 @@ function isOneOfWellKnownSymbols(n) {
   return 0<=WELL_KNOWN_SYMBOLS.indexOf(n);
 }
 
-const      IGNORING_KEYWORDS = [ 'toJSON', 'toPostgres', 'then', '$$typeof' ];
+const      IGNORING_KEYWORDS = [ 'toJSON', 'toPostgres', 'then', '$$typeof', '@@iterator' ];
 const JEST_IGNORING_KEYWORDS = [ 'toJSON', 'toPostgres', 'then', 'stack','message','cause' ];
 
 console.error('isOneOfWellKnownSymbols( Symbol.iterator ) ',  isOneOfWellKnownSymbols( Symbol.iterator )  );
