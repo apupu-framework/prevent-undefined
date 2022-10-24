@@ -159,6 +159,11 @@ if (i === undefined ) {
 - Applied automated code generation for tests.
 
 
+#### v0.2.16 ####
+Changed the way to check if the object is a symbol or not.
+
+
+
  Conclusion
 --------------------------------------------------------------------------------
 That's all. Thank you very much.
