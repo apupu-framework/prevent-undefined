@@ -66,7 +66,7 @@ function isBuiltIn( t ) {
  * $$typeof  (Mon, 24 Oct 2022 15:32:46 +0900)
  * SEE https://overreacted.io/why-do-react-elements-have-typeof-property/
  */
-const      IGNORING_KEYWORDS = [ 'toJSON', 'toPostgres', 'then', Symbol.toStringTag, Symbol.toPrimitive ];
+const      IGNORING_KEYWORDS = [ 'toJSON', 'toPostgres', 'then', Symbol.toStringTag, Symbol.toPrimitive, '$$typeof' ];
 const JEST_IGNORING_KEYWORDS = [ 'toJSON', 'toPostgres', 'then', Symbol.toStringTag, Symbol.toPrimitive, 'stack','message','cause' ];
 
 function preventUndefined(argTarget, argState){

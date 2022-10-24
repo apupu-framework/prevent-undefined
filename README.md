@@ -136,6 +136,15 @@ helped me to understand the problem. Thank you very much.
 `v0.2.11` does not work as an ES6 module due to my carelessness.  The problem
 was fixed n this version.
 
+#### v0.2.13 ####
+Skipped the version `v0.2.13` via fear of Friday the 13th.  This version have
+never been released.
+
+#### v0.2.14 ####
+In the version `v0.2.11`, I documented, commented, and tested it without
+modifying the actual code. 
+
+
 
  Conclusion
 --------------------------------------------------------------------------------
