@@ -42,6 +42,9 @@ function isBuiltIn( t ) {
   );
 };
 
+const      IGNORING_KEYWORDS = [ 'toJSON', 'toPostgres', 'then', Symbol.toStringTag, Symbol.toPrimitive ];
+const JEST_IGNORING_KEYWORDS = [ 'toJSON', 'toPostgres', 'then', Symbol.toStringTag, Symbol.toPrimitive, 'stack','message','cause' ];
+
 function preventUndefined(argTarget, argState){
   const currTarget = argTarget;
   const currState = {
@@ -61,7 +64,21 @@ function preventUndefined(argTarget, argState){
      * toPrimitive (Wed, 19 Oct 2022 13:29:20 +0900)
      * SEE https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/toPrimitive
      */
-    excludes : (n)=>0<=[ 'toJSON', 'toPostgres', 'then', Symbol.toStringTag, Symbol.toPrimitive ].indexOf(n),
+    excludes : (n)=>{
+      const stack = new Error().stack.trim().split('\n');
+      // console.error('stack',stack); 
+      // console.error('stack[3]',stack[3]); // this could be the location Jest calls the func.
+      const isProblematicModule = 
+        4<stack.length ? 
+          ( 0<=stack[3].search( /node_modules.jest/ ) ) || 
+          ( 0<=stack[3].search( /node_modules.pretty/ ) ) :
+          false;
+      if ( isProblematicModule ) {
+        return 0<=JEST_IGNORING_KEYWORDS.indexOf(n);
+      } else {
+        return 0<=     IGNORING_KEYWORDS.indexOf(n);
+      }
+    },
     ...argState,
   };
 
