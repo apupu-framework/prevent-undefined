@@ -132,6 +132,11 @@ helped me to understand the problem. Thank you very much.
 
 [$$typeof]: https://overreacted.io/why-do-react-elements-have-typeof-property/ 
 
+#### v0.2.12 ####
+`v0.2.11` does not work as an ES6 module due to my carelessness.  The problem
+was fixed n this version.
+
+
  Conclusion
 --------------------------------------------------------------------------------
 That's all. Thank you very much.

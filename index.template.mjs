@@ -14,5 +14,5 @@ function inspect(s) {
 export {
   preventUndefined ,
   undefinedlessFunction ,
-  unprevent = unprevent
+  unprevent,
 };

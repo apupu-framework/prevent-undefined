@@ -164,7 +164,7 @@ function undefinedlessFunction( fn ) {
       const __args = args.map( (e)=>preventUndefined(e) );
       return preventUndefined( fn.apply( this, __args ) );
     };
-  `)(fn,module.exports.preventUndefined);
+  `)(fn,preventUndefined);
 }
 
 
@@ -172,5 +172,5 @@ function undefinedlessFunction( fn ) {
 export {
   preventUndefined ,
   undefinedlessFunction ,
-  unprevent = unprevent
+  unprevent,
 };
