@@ -168,6 +168,9 @@ Changed the way to check if the object is a symbol or not.
 Added '@@iterator' to the ignore list in order to avoid an issue that will
 occur when use this module with `React.js`.
 
+#### v0.2.18 ####
+(Thu, 03 Nov 2022 17:11:29 +0900)
+Removed a unnecessarily left unremoved debug logging output.
 
 
  Conclusion
