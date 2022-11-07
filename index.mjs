@@ -194,10 +194,25 @@ function undefinedlessFunction( fn ) {
   `)(fn,preventUndefined);
 }
 
+function recursivelyUnprevent( o ) {
+  o = unprevent( o );
+  if ( o && typeof o === 'object' ) {
+    for (const [key, value] of Object.entries(o)) {
+      o[key] = recursivelyUnprevent( value );
+    }
+  }
+  return o;
+}
+
+
+const errorIfUndefined = name=>{throw new ReferenceError(`the parameter value of ${name} was undefined; any reference to an undefined value is strictly prohibited on this object.`)};
+
 
 
 export {
   preventUndefined ,
   undefinedlessFunction ,
   unprevent,
+  errorIfUndefined,
+  recursivelyUnprevent,
 };

@@ -1,4 +1,4 @@
 params: body
-import { preventUndefined, undefinedlessFunction } from './index.mjs' ;
+import { preventUndefined, undefinedlessFunction, recursivelyUnprevent, errorIfUndefined, } from './index.mjs' ;
 
 <%=body %>

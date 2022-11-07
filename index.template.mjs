@@ -15,4 +15,6 @@ export {
   preventUndefined ,
   undefinedlessFunction ,
   unprevent,
+  errorIfUndefined,
+  recursivelyUnprevent,
 };

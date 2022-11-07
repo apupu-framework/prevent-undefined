@@ -41,7 +41,6 @@ ReferenceError: obj.hello.world.foo.bar.VAZ is not defined in {
  Unprevent 
 --------------------------------------------------------------------------------
 
-
 Sometimes, you will want to unprevent your objects especially when you want to
 use [optional chaining][]:
 
@@ -94,6 +93,38 @@ proc(o); // you'll get "hello world" as expected.
 ```
 
 [optional chaining]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining
+
+
+ errorIfUndefined()
+--------------------------------------------------------------------------------
+`errorIfUndefined()` is a perfect fancy decoration to implement
+''prevent-undefined way'' of named parameters. When you call `errorIfUndefined()`,
+it simply throws ReferenceError(). The its only use case is as following :
+
+```javascript
+function strictFunc({foo=errorIfUndefined('foo')}) {
+  console.error(foo);
+}
+strictFunc({ foo_WITH_TYPO: 'foo' });
+
+> ReferenceError: the parameter value of foo was undefined; any reference to an undefined value is strictly prohibited on this object.   
+```
+
+`errorIfUndefined` takes only one parameter : `name` which is to specify the name of the parameter.
+
+
+ recursivelyUnprevent() 
+--------------------------------------------------------------------------------
+`recursivelyUnprevent()` recursively unprevent the specified object, literally.
+Currently `recursivelyUnprevent()` is in the beta state; therefore, please use
+this with care. Currently, this does not check any circular references.
+
+
+
+ Philosophy Behind the Module `prevent-unprevent`
+--------------------------------------------------------------------------------
+TODO
+
 
 
  History 
@@ -171,6 +202,11 @@ occur when use this module with `React.js`.
 #### v0.2.18 ####
 (Thu, 03 Nov 2022 17:11:29 +0900)
 Removed a unnecessarily left unremoved debug logging output.
+
+#### v0.2.19 ####
+(Mon, 07 Nov 2022 16:17:06 +0900)
+Added recursivelyUnprevent() and errorIfUndefined()
+
 
 
  Conclusion

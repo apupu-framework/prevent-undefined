@@ -1,4 +1,4 @@
-import { preventUndefined, undefinedlessFunction } from './index.mjs' ;
+import { preventUndefined, undefinedlessFunction, recursivelyUnprevent, errorIfUndefined, } from './index.mjs' ;
 
 test( '', ()=>{
   const __foo = {
@@ -172,7 +172,41 @@ test( 'check ignore list `@@iterator` (for `React.js`)' , ()=>{
 });
 
 
+test( 'errorIfUndefined' , ()=>{
+  expect(()=>{
+    try{
+      ((
+        {
+          hello = errorIfUndefined('hello'),
+        }
+      )=>'result')(
+        {
+          hello_TYPO: 'hello',
+        }
+      )
+    } catch (e){
+      console.error(e);
+      throw e;
+    }
+  }).toThrow(ReferenceError);
+});
 
+
+test( 'errorIfUndefined' , ()=>{
+  const o = preventUndefined({
+    a : preventUndefined({
+      b: 'hello',
+    }),
+  });
+
+  const o2 = recursivelyUnprevent( o ); 
+  expect(()=>o2.hello.foo.bar ).toThrow( );
+  expect(()=>o2.NONEXISTENT ).not.toThrow( );
+  expect(()=>o2.a.NONEXISTENT ).not.toThrow( );
+  expect(()=>o2.a.b).not.toThrow(  );
+  expect(()=>o2.a.b.c).not.toThrow(  );
+  expect(()=>o2.a.b.c.d).toThrow(  );
+});
 
 
 
