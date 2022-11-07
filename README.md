@@ -5,7 +5,7 @@
 
 It also displays dump of the refered object for your convenience. See below :
 
-```
+```javascript
 const  { preventundefined } = require("prevent-undefined" );
 // or
 import { preventUndefined } from "prevent-undefined";
@@ -29,7 +29,7 @@ import { preventUndefined } from "prevent-undefined";
 
 then, you'll get:
 
-```
+```javascript
 > node foo.js
 ReferenceError: obj.hello.world.foo.bar.VAZ is not defined in {
   hello: {
@@ -44,7 +44,7 @@ ReferenceError: obj.hello.world.foo.bar.VAZ is not defined in {
 Sometimes, you will want to unprevent your objects especially when you want to
 use [optional chaining][]:
 
-```
+```javascript
 const { preventUndefined } = require('./common.js');
 const someObj = {
   hello : {
@@ -68,7 +68,7 @@ proc(o);
 ```
 you'll get
 
-```
+```javascript
 ReferenceError: obj.hello.world.foo.bar.baz.value is not defined in {
   hello: {
     world: {
@@ -83,7 +83,7 @@ which you definitely don't want.
 
 Use `unprevent()`
 
-```
+```javascript
 const  { unprevent } = require("prevent-undefined/common.js");
 function proc(o){
   o=unprevent(o);
