@@ -115,7 +115,7 @@ proc(o); // you'll get "hello world" as expected.
 [optional chaining]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining
 
 
- errorIfUndefined()
+ errorIfUndefined() **ADDED v0.2.19**
 --------------------------------------------------------------------------------
 `errorIfUndefined()` is a perfect fancy mascot to implement 
 ''prevent-undefined way'' of named parameters. When you call `errorIfUndefined()`,
@@ -132,19 +132,16 @@ strictFunc({ foo_WITH_TYPO: 'foo' });
 
 `errorIfUndefined` takes only one parameter : `name` which is to specify the name of the parameter.
 
-**ADDED v0.2.19**
 
 
- recursivelyUnprevent() 
+ recursivelyUnprevent() **ADDED v0.2.19**
 --------------------------------------------------------------------------------
 `recursivelyUnprevent()` recursively unprevent the specified object, literally.
 Currently `recursivelyUnprevent()` is in the beta state; therefore, please use
 this with care. Currently, this does not check any circular references.
 
-**ADDED v0.2.19**
 
-
- preventUnusedProperties() 
+ preventUnusedProperties()  **ADDED v0.2.20**
 --------------------------------------------------------------------------------
 The basic idea is :
 ```
@@ -194,8 +191,6 @@ someFunc({foo,bar,baz});
 >   "baz": "baz"
 > }
 ```
-
-Use `preventUnusedProperties()`; and I wish your good luck with your project.
 
 
  The Basic Idea of `prevent-unprevent`
@@ -258,13 +253,13 @@ function getYourDataFromResource(id) {
 
 Even though the problem is obviously occured inside the function
 `getYourDataFromResource()` you will only get the error from a totaly
-irrelevant function `showName()` which is extremely confusing and annoying.
+irrelevant function `showName()` which is very confusing and annoying.
 
-The language should actually throw an Error where the undefined value comes out.
+The language should actually throw an Error where the `undefined` value comes out.
 
 IMHO, `undefined` is always poisoneous; the language system should have never
-allow the existence of undefined values. In spite of the difficulty, the
-current specification of ECMA Script cannot prevent undefined values even if you
+allow the existence of `undefined`. In spite of the difficulty, the current
+specification of ECMA Script cannot detect undefined properties even if you
 enable 'use strict'.
 
 This is where `prevent-undefined` come in.
@@ -294,9 +289,9 @@ function getYourDataFromResource(id) {
 ```
 
 When you applied `prevent-undefined` in this way, you can easily indicate where
-the problematic `undefined` value come from. 
+the problematic `undefined` comes from. 
 
-IMHO, you should always avoid referencing `undefined` for any form.
+IMHO, you should always avoid referencing undefined properties for any form.
 
 Write not like this:
 
@@ -315,7 +310,7 @@ if ( 'foo' in o  ) {
 ```
 
 Because the conditional check `o.foo` implicitly references `undefined` which
-makes detecting the undefined values very difficult.
+makes detecting `undefined` very difficult.
 
 ```javascript
 
@@ -428,6 +423,9 @@ Added `recursivelyUnprevent()` and `errorIfUndefined()`
 Added `preventUnusedProperties()`
 Updated README.md; added a section `The Basic Idea of preventUndefined()`.
 
+#### v0.2.21 ####
+(Wed, 09 Nov 2022 16:01:54 +0900)
+Updated README.md.
 
  Conclusion
 --------------------------------------------------------------------------------
