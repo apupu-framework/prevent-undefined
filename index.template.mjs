@@ -2,7 +2,7 @@ params: body
 'use strict'
 
 function inspect(s) {
-  return JSON.stringify( s );
+  return JSON.stringify( s, null, 2 );
 }
 
 
@@ -17,4 +17,5 @@ export {
   unprevent,
   errorIfUndefined,
   recursivelyUnprevent,
+  preventUnusedProperties,
 };

@@ -38,7 +38,27 @@ ReferenceError: obj.hello.world.foo.bar.VAZ is not defined in {
 }
 ```
 
- Unprevent 
+
+ The Major Usecase of `preventUndefined`
+--------------------------------------------------------------------------------
+The major usecase of `preventUndefined` is checking validity of named parameter
+values:
+
+```javascript
+function someFunc(args){
+  const {foo,bar} = preventUndefined(args);
+  console.error("foo:",foo);
+}
+
+someFunc({wrongArg1:"foo", wrongArg2:"bar";});
+
+> ReferenceError: obj.foo is not defined in {
+>   "wrongArg1": "foo",
+>   "wrongArg2": "bar"
+> }
+```
+
+ unprevent()
 --------------------------------------------------------------------------------
 
 Sometimes, you will want to unprevent your objects especially when you want to
@@ -97,9 +117,9 @@ proc(o); // you'll get "hello world" as expected.
 
  errorIfUndefined()
 --------------------------------------------------------------------------------
-`errorIfUndefined()` is a perfect fancy decoration to implement
+`errorIfUndefined()` is a perfect fancy mascot to implement 
 ''prevent-undefined way'' of named parameters. When you call `errorIfUndefined()`,
-it simply throws ReferenceError(). The its only use case is as following :
+it simply throws ReferenceError(). Its only use case is as following :
 
 ```javascript
 function strictFunc({foo=errorIfUndefined('foo')}) {
@@ -112,6 +132,8 @@ strictFunc({ foo_WITH_TYPO: 'foo' });
 
 `errorIfUndefined` takes only one parameter : `name` which is to specify the name of the parameter.
 
+**ADDED v0.2.19**
+
 
  recursivelyUnprevent() 
 --------------------------------------------------------------------------------
@@ -119,11 +141,204 @@ strictFunc({ foo_WITH_TYPO: 'foo' });
 Currently `recursivelyUnprevent()` is in the beta state; therefore, please use
 this with care. Currently, this does not check any circular references.
 
+**ADDED v0.2.19**
 
 
- Philosophy Behind the Module `prevent-unprevent`
+ preventUnusedProperties() 
 --------------------------------------------------------------------------------
-TODO
+The basic idea is :
+```
+// There is a func as :
+function someFunc({foo,bar}){
+  console.error("foo:",foo);
+  console.error("bar:",bar);
+  // note that `baz` is not used at all.
+}
+
+var foo = 'foo';
+var bar = 'bar';
+var baz = 'baz'; 
+// `baz` a property which the caller thinks it is valid but actually isn't.
+someFunc({foo,bar,baz});
+
+> foo: foo
+> bar: bar
+
+// You'll get `foo` `bar` without getting any error that sucks.
+```
+
+In order to prevent such tiredness, use `preventUnusedProperties()`.
+
+```
+function someFunc(args){
+  // Prevent undefined on the `args` object before destructuring it.
+  const {foo,bar} = preventUndefined(args);
+
+  // After destructured the `args` object, call `preventUnusedProperties()`
+  preventUnusedProperties(args);
+
+  console.error("foo:",foo);
+  console.error("bar:",bar);
+}
+
+var foo = 'foo';
+var bar = 'bar';
+var baz = 'baz';
+someFunc({foo,bar,baz});
+
+
+> ReferenceError: the field [baz] was not referred in
+> {
+>   "foo": "foo",
+>   "bar": "bar",
+>   "baz": "baz"
+> }
+```
+
+Use `preventUnusedProperties()`; and I wish your good luck with your project.
+
+
+ The Basic Idea of `prevent-unprevent`
+--------------------------------------------------------------------------------
+IMHO, `undefined` is always evil:
+
+```javascript
+  // you defined some procedures :
+  function showName(name){
+    if (name.length<10) {
+      console.error( "a short name", name );
+    } else {
+      console.error( "a long name", name );
+    }
+  }
+  function foo(guy) {
+    showName(guy.name);
+  }
+
+  // then, you have some data:
+  const guy1 = getYourDataFromResource('john');
+  const guy2 = getYourDataFromResource('paul');
+
+  // then, you want to exec the procedures with your data:
+  foo(guy1)
+  foo(guy2);
+
+  // and if you misteriously get ReferenceError as
+
+  > TypeError: Cannot read properties of undefined (reading 'length')
+  > at showName (..) file.js:17:14
+  > ...
+```
+
+At this point, you have no clue where the problem came from. At this point, you
+will never notice that some junkie made a function as following:
+
+```javascript
+  const jOhN ={
+    NAME:'John',
+    AGE: 18,
+  };
+  const pAul ={
+    NAME:'Paul',
+    AGE: 23,
+  };
+
+function getYourDataFromResource(id) {
+  if ( id === 'john' ) {
+    return {
+      name : jOhN.namee;
+    }
+  } else if ( id ==='PaUL' ) {
+    return {
+      name : pAul.naame;
+    }
+  }
+}
+```
+
+Even though the problem is obviously occured inside the function
+`getYourDataFromResource()` you will only get the error from a totaly
+irrelevant function `showName()` which is extremely confusing and annoying.
+
+The language should actually throw an Error where the undefined value comes out.
+
+IMHO, `undefined` is always poisoneous; the language system should have never
+allow the existence of undefined values. In spite of the difficulty, the
+current specification of ECMA Script cannot prevent undefined values even if you
+enable 'use strict'.
+
+This is where `prevent-undefined` come in.
+
+```javascript
+const jOhN = preventUndefined({
+  NAME:'John',
+  AGE: 18,
+});
+
+const pAul = preventUndefined({
+  NAME:'Paul',
+  AGE: 23,
+});
+
+function getYourDataFromResource(id) {
+  if ( id === 'john' ) {
+    return {
+      name : jOhN.namee; // this throws error.
+    }
+  } else if ( id ==='PaUL' ) {
+    return {
+      name : pAul.naame; // this throws error, too.
+    }
+  }
+}
+```
+
+When you applied `prevent-undefined` in this way, you can easily indicate where
+the problematic `undefined` value come from. 
+
+IMHO, you should always avoid referencing `undefined` for any form.
+
+Write not like this:
+
+```javascript
+if ( o.foo ) {
+  console.error( 'foo exists' );
+}
+```
+
+Write like this:
+
+```javascript
+if ( 'foo' in o  ) {
+  console.error( 'foo exists' );
+}
+```
+
+Because the conditional check `o.foo` implicitly references `undefined` which
+makes detecting the undefined values very difficult.
+
+```javascript
+
+// if the o was get preventUndefined()ed somewhere before:
+if ( o.foo ) { // this throws ReferenceError()
+  console.error( 'foo exists' );
+}
+```
+
+Unfortunately some functions from the standard JavaScript library use implicit
+referencing `undefined`; for example,
+
+```javascript
+const o = preventUndefined( {hello:1})
+
+// The following code will end up ReferenceError which led our `preventUndefined()` to
+// ignore `then` with some hard-coding.
+Promise.resolve( o );
+```
+
+That is, if you have found some standard functions that implicitly refers
+`undefined` it is necessary to add the name of the property to the ignore list
+which is hard-coded in `prevent-undefined` module.
 
 
 
@@ -205,8 +420,13 @@ Removed a unnecessarily left unremoved debug logging output.
 
 #### v0.2.19 ####
 (Mon, 07 Nov 2022 16:17:06 +0900)
-Added recursivelyUnprevent() and errorIfUndefined()
+Added `recursivelyUnprevent()` and `errorIfUndefined()`
 
+
+#### v0.2.20 ####
+(Wed, 09 Nov 2022 15:52:32 +0900)
+Added `preventUnusedProperties()`
+Updated README.md; added a section `The Basic Idea of preventUndefined()`.
 
 
  Conclusion

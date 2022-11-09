@@ -1,4 +1,4 @@
-import { preventUndefined, undefinedlessFunction, recursivelyUnprevent, errorIfUndefined, } from './index.mjs' ;
+import { preventUndefined, undefinedlessFunction, recursivelyUnprevent, preventUnusedProperties, errorIfUndefined, } from './index.mjs' ;
 
 test( '', ()=>{
   const __foo = {
@@ -124,12 +124,16 @@ test( 'Wrapping function (arg0) ... 3' , ()=>{
 
 
 test( 'check ignore list `then` (for `Promise`)' , ()=>{
+  expect( Promise.resolve( preventUndefined({hello:1})) ).resolves.not.toThrow()
+});
+
+test( 'check ignore list `toPostgres` (for `node-postgres`)' , ()=>{
   const __foo = {
     hello : {
-      [Symbol.search]: true,
+      hello : true,
     }
   };
-  expect(()=> preventUndefined( __foo ).hello['toPostgres'] === true ).not.toThrow();
+  expect(()=> preventUndefined( __foo ).hello.toPostgres === true ).not.toThrow();
 });
 
 
@@ -209,5 +213,50 @@ test( 'errorIfUndefined' , ()=>{
 });
 
 
+test( 'preventUnusedProperties' , ()=>{
+  const o = preventUndefined({
+    a:1,
+    b:2,
+  });
+  expect(()=>{ preventUnusedProperties(o) }).toThrow( 'the fields [a,b] were not referred in\n{\n  "a": 1,\n  "b": 2\n}' );
+  console.error( o.a );
+  expect(()=>{ preventUnusedProperties(o) }).toThrow( 'the field [b] was not referred in\n{\n  "a": 1,\n  "b": 2\n}' );
+  console.error( o.b );
+  expect(()=>{ preventUnusedProperties(o) }).not.toThrow( );
+});
+
+
+test( 'preventUnusedProperties for an array' , ()=>{
+  const o = preventUndefined(["foo","bar","bum"]);
+  expect(()=>{ preventUnusedProperties(o) }).toThrow( 'the fields [0,1,2] were not referred in\n[\n  "foo",\n  "bar",\n  "bum"\n]' );
+  console.error( o[0] );
+  expect(()=>{ preventUnusedProperties(o) }).toThrow( 'the fields [1,2] were not referred in\n[\n  "foo",\n  "bar",\n  "bum"\n]' );
+  console.error( o[1] );
+  expect(()=>{ preventUnusedProperties(o) }).toThrow( 'the field [2] was not referred in\n[\n  "foo",\n  "bar",\n  "bum"\n]' );
+  console.error( o[2] );
+  expect(()=>{ preventUnusedProperties(o) }).not.toThrow( );
+});
+
+
+test( 'sample' , ()=>{
+  expect( ()=>{
+    function someFunc(args){
+      // Prevent undefined on the `args` object before destructuring it.
+      args = preventUndefined(args);
+      const {foo,bar} = args;
+
+      // After destructured the `args` object, call `preventUnusedProperties()`
+      preventUnusedProperties(args);
+
+      console.error("foo:",foo);
+      console.error("bar:",bar);
+    }
+
+    var foo = 'foo';
+    var bar = 'bar';
+    var baz = 'baz';
+    someFunc({foo,bar,baz});
+  }).toThrow(new ReferenceError('the field [baz] was not referred in\n{\n  "foo": "foo",\n  "bar": "bar",\n  "baz": "baz"\n}'));
+});
 
 

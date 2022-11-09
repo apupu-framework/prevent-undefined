@@ -3,18 +3,20 @@ params: body
 
 const util = require('util');
 function inspect(s) {
-  return util.inspect( s, {
-    depth:null,
-    // colors:true,
-  });
+  return JSON.stringify( s, null, 2 );
+  // return util.inspect( s, {
+  //   depth:null,
+  //   // colors:true,
+  // });
 }
 
 <%=body %>
 
 
-module.exports.preventUndefined      = preventUndefined;
-module.exports.undefinedlessFunction = undefinedlessFunction;
-module.exports.unprevent             = unprevent;
-module.exports.errorIfUndefined      = errorIfUndefined;
-module.exports.recursivelyUnprevent  = recursivelyUnprevent;
+module.exports.preventUndefined        = preventUndefined;
+module.exports.undefinedlessFunction   = undefinedlessFunction;
+module.exports.unprevent               = unprevent;
+module.exports.errorIfUndefined        = errorIfUndefined;
+module.exports.recursivelyUnprevent    = recursivelyUnprevent;
+module.exports.preventUnusedProperties = preventUnusedProperties;
 

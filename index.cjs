@@ -2,10 +2,11 @@
 
 const util = require('util');
 function inspect(s) {
-  return util.inspect( s, {
-    depth:null,
-    // colors:true,
-  });
+  return JSON.stringify( s, null, 2 );
+  // return util.inspect( s, {
+  //   depth:null,
+  //   // colors:true,
+  // });
 }
 
 
@@ -96,13 +97,21 @@ const JEST_IGNORING_KEYWORDS = [ 'toJSON', 'toPostgres', 'then', 'stack','messag
 
 // console.error('isOneOfWellKnownSymbols( Symbol.iterator ) ',  isOneOfWellKnownSymbols( Symbol.iterator )  );
 
-function preventUndefined(argTarget, argState){
+function checkIfAllPropertiesAreReferred( target, referredProps ) {
+  const targetKeys   = Object.keys( target );
+  const referredKeys = Object.keys( referredProps );
+  const result       = targetKeys.filter( e=>! referredKeys.includes( e ) );
+  return result;
+}
+
+function preventUndefined( argTarget, argState ){
   const currTarget = argTarget;
   const currState = {
-    isRootState:true,
-    parentState : null,
-    currTarget  : currTarget,
-    propPath : [],
+    isRootState   : true,
+    parentState   : null,
+    currTarget    : currTarget,
+    referredProps : {}, // the properties which have been referred so far.
+    propPath      : [],
 
     excludes : (n)=>{
       const stack = new Error().stack.trim().split('\n');
@@ -132,15 +141,22 @@ function preventUndefined(argTarget, argState){
         if ( prop === '__IS_PREVENTED_UNDEFINED__' ) {
           return true;
         }
+        if ( prop === '__CHECK_IF_ALL_PROPERTIES_ARE_REFERRED__' ) {
+          return checkIfAllPropertiesAreReferred( target, currState.referredProps );
+        }
+
+        // Be aware the object is directly modified; this object is not duplicated.
+        currState.referredProps[prop] = true;
 
         const nextTarget = Reflect.get(...arguments);
 
         const nextState = {
           ...currState,
-          isRootState : false,
-          parentState : currState,
-          currTarget  : nextTarget,
-          propPath   : [ ...currState.propPath, prop ],
+          isRootState   : false,
+          parentState   : currState,
+          currTarget    : nextTarget,
+          referredProps : {},
+          propPath      : [ ...currState.propPath, prop ],
         };
 
         if ( ( typeof nextTarget === 'undefined') && ! currState.excludes( prop ) ) {
@@ -204,14 +220,28 @@ function recursivelyUnprevent( o ) {
   return o;
 }
 
+function preventUnusedProperties( o ) {
+  if ( ! o.__IS_PREVENTED_UNDEFINED__ )
+    throw new TypeError('this object is not prevented undefined');
+  const result = o.__CHECK_IF_ALL_PROPERTIES_ARE_REFERRED__;
+  if ( result.length !== 0 ) {
+    const dump = inspect( o.__UNPREVENT__ , {depth:null,breakLength:80});
+    if ( result.length === 1 ) {
+      throw new ReferenceError( 'the field [' + result[0] + '] was not referred in\n' + dump );
+    } else {
+      throw new ReferenceError( 'the fields [' + result.join(',') + '] were not referred in\n' + dump );
+    }
+  }
+}
 
 const errorIfUndefined = name=>{throw new ReferenceError(`the parameter value of ${name} was undefined; any reference to an undefined value is strictly prohibited on this object.`)};
 
 
 
 
-module.exports.preventUndefined      = preventUndefined;
-module.exports.undefinedlessFunction = undefinedlessFunction;
-module.exports.unprevent             = unprevent;
-module.exports.errorIfUndefined      = errorIfUndefined;
-module.exports.recursivelyUnprevent  = recursivelyUnprevent;
+module.exports.preventUndefined        = preventUndefined;
+module.exports.undefinedlessFunction   = undefinedlessFunction;
+module.exports.unprevent               = unprevent;
+module.exports.errorIfUndefined        = errorIfUndefined;
+module.exports.recursivelyUnprevent    = recursivelyUnprevent;
+module.exports.preventUnusedProperties = preventUnusedProperties;
