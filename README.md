@@ -144,7 +144,7 @@ this with care. Currently, this does not check any circular references.
  preventUnusedProperties()  **ADDED v0.2.20**
 --------------------------------------------------------------------------------
 The basic idea is :
-```
+```javascript
 // There is a func as :
 function someFunc({foo,bar}){
   console.error("foo:",foo);
@@ -166,7 +166,7 @@ someFunc({foo,bar,baz});
 
 In order to prevent such tiredness, use `preventUnusedProperties()`.
 
-```
+```javascript
 function someFunc(args){
   // Prevent undefined on the `args` object before destructuring it.
   const {foo,bar} = preventUndefined(args);
@@ -255,7 +255,7 @@ Even though the problem is obviously occured inside the function
 `getYourDataFromResource()` you will only get the error from a totaly
 irrelevant function `showName()` which is very confusing and annoying.
 
-The language should actually throw an Error where the `undefined` value comes out.
+The language should actually throw an Error where the `undefined` comes out.
 
 IMHO, `undefined` is always poisoneous; the language system should have never
 allow the existence of `undefined`. In spite of the difficulty, the current
@@ -425,6 +425,10 @@ Updated README.md; added a section `The Basic Idea of preventUndefined()`.
 
 #### v0.2.21 ####
 (Wed, 09 Nov 2022 16:01:54 +0900)
+Updated README.md.
+
+#### v0.2.22 ####
+(Wed, 09 Nov 2022 16:11:21 +0900)
 Updated README.md.
 
  Conclusion
