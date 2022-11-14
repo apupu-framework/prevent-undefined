@@ -58,6 +58,7 @@ someFunc({wrongArg1:"foo", wrongArg2:"bar";});
 > }
 ```
 
+
  unprevent()
 --------------------------------------------------------------------------------
 
@@ -115,33 +116,16 @@ proc(o); // you'll get "hello world" as expected.
 [optional chaining]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining
 
 
- errorIfUndefined() **ADDED v0.2.19**
---------------------------------------------------------------------------------
-`errorIfUndefined()` is a perfect fancy mascot to implement 
-''prevent-undefined way'' of named parameters. When you call `errorIfUndefined()`,
-it simply throws ReferenceError(). Its only use case is as following :
-
-```javascript
-function strictFunc({foo=errorIfUndefined('foo')}) {
-  console.error(foo);
-}
-strictFunc({ foo_WITH_TYPO: 'foo' });
-
-> ReferenceError: the parameter value of foo was undefined; any reference to an undefined value is strictly prohibited on this object.   
-```
-
-`errorIfUndefined` takes only one parameter : `name` which is to specify the name of the parameter.
-
-
-
- recursivelyUnprevent() **ADDED v0.2.19**
+ recursivelyUnprevent() 
 --------------------------------------------------------------------------------
 `recursivelyUnprevent()` recursively unprevent the specified object, literally.
 Currently `recursivelyUnprevent()` is in the beta state; therefore, please use
 this with care. Currently, this does not check any circular references.
 
+`recursivelyUnprevent()` was **ADDED v0.2.19**.
 
- preventUnusedProperties()  **ADDED v0.2.20**
+
+ preventUnusedProperties()
 --------------------------------------------------------------------------------
 The basic idea is :
 ```javascript
@@ -191,6 +175,69 @@ someFunc({foo,bar,baz});
 >   "baz": "baz"
 > }
 ```
+
+`preventUnusedProperties()` was **added v0.2.20**.
+
+
+
+ About Validators
+--------------------------------------------------------------------------------
+If you set a validator to the second parameter of `preventUndefined()`, it monitors
+every modification on the object to keep consistency of the object.
+
+```javascript
+const validator = (o)=>typeof o.foo.bar.value === 'number';
+const obj = preventUndefined({
+  foo : {
+    bar : {
+      value : 100,
+    },
+  }
+}, validator);
+
+obj.foo.bar.value = 'BUMMER! NOT A NUMBER';
+
+> ReferenceError: detected defining an invalid property value to obj.foo.bar.value on 
+> {
+>   "foo": {
+>     "bar": {
+>       "value": "BLAH! NOT A NUMBER"
+>     }
+>   }
+> }
+```
+
+`validator(o)` receives the target object as the first argument. Return true if
+the target object is valid; otherwise return false. `preventUndefined` regards
+any throwing error as failure of the validation.
+
+You can specify any funciton/closure as an evaluator. I recommend you to use a
+non-opinionated validator [RTTI.js](RTTI.js); though it is not necessary.
+
+See also [RTTI.js](RTTI.js)
+
+[RTTI.js]: (https://www.npmjs.com/package/rtti.js)
+
+
+
+ errorIfUndefined()
+--------------------------------------------------------------------------------
+`errorIfUndefined()` is a perfect fancy mascot to implement 
+''prevent-undefined way'' of named parameters. When you call `errorIfUndefined()`,
+it simply throws ReferenceError(). Its only use case is as following :
+
+```javascript
+function strictFunc({foo=errorIfUndefined('foo')}) {
+  console.error(foo);
+}
+strictFunc({ foo_WITH_TYPO: 'foo' });
+
+> ReferenceError: the parameter value of foo was undefined; any reference to an undefined value is strictly prohibited on this object.   
+```
+
+`errorIfUndefined` takes only one parameter : `name` which is to specify the name of the parameter.
+
+`errorIfUndefined()` **ADDED v0.2.19**.
 
 
  The Basic Idea of `prevent-unprevent`
@@ -430,6 +477,10 @@ Updated README.md.
 #### v0.2.22 ####
 (Wed, 09 Nov 2022 16:11:21 +0900)
 Updated README.md.
+
+#### v0.2.23 ####
+(Mon, 14 Nov 2022 17:25:30 +0900)
+Supported validators.
 
  Conclusion
 --------------------------------------------------------------------------------

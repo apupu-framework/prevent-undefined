@@ -190,7 +190,7 @@ function preventUndefined( ...args ) {
   };
 
   // Perform the entry time validation.
-  executeValidation( null, 'failed object validation on \n$dump' );
+  executeValidation( null, 'failed object validation on\n$dump' );
 
   if (( typeof currTarget === 'object') && currTarget !== null && ( ! isBuiltIn( currTarget ) ) ) {
     const currHandler = {
@@ -252,19 +252,19 @@ function preventUndefined( ...args ) {
       set(...args) {
         const result = Reflect.set(...args);
         const [ target, property, value, receiver ] = args;
-        executeValidation( property, 'detected setting an invalid property value to $path on \n$dump' );
+        executeValidation( property, 'detected setting an invalid property value to $path on\n$dump' );
         return result;
       },
       defineProperty(...args) {
         const result = Reflect.defineProperty( ...args );
         const [ target, property, descriptor ] = args;
-        executeValidation( property, 'detected defining an invalid property value to $path on \n$dump' );
+        executeValidation( property, 'detected defining an invalid property value to $path on\n$dump' );
         return result;
       },
       deleteProperty(...args) {
         const result = Reflect.deleteProperty( ...args );
         const [ target, property ] = args;
-        executeValidation( property, 'detected deleting an invalid property value to $path on \n$dump' );
+        executeValidation( property, 'detected deleting an invalid property value to $path on\n$dump' );
         return result;
       },
     };

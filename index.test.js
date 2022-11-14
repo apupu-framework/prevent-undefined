@@ -461,3 +461,30 @@ test( 'validator No.9 check detecting throwing inside the validator' , ()=>{
 
   }).toThrow(ReferenceError);
 });
+
+
+test( 'sample' , ()=>{
+  expect( ()=>{
+    const validator = (o)=>typeof o.foo.bar.value === 'number';
+    const obj = preventUndefined({
+      foo : {
+        bar : {
+          value : 100,
+        },
+      }
+    },validator);
+
+    obj.foo.bar.value = 'BLAH! NOT A NUMBER';
+
+  }).toThrow(new ReferenceError(`
+detected defining an invalid property value to obj.foo.bar.value on
+{
+  "foo": {
+    "bar": {
+      "value": "BLAH! NOT A NUMBER"
+    }
+  }
+}
+    `.trim()));
+});
+
