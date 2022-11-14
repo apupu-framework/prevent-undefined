@@ -212,9 +212,9 @@ the target object is valid; otherwise return false. `preventUndefined` regards
 any throwing error as failure of the validation.
 
 You can specify any funciton/closure as an evaluator. I recommend you to use a
-non-opinionated validator [RTTI.js](RTTI.js); though it is not necessary.
+non-opinionated validator [RTTI.js][]; though it is not necessary.
 
-See also [RTTI.js](RTTI.js)
+See also [RTTI.js][]
 
 [RTTI.js]: (https://www.npmjs.com/package/rtti.js)
 
