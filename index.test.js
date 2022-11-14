@@ -258,3 +258,206 @@ test( 'sample' , ()=>{
 });
 
 
+
+test( 'validator No.1 setting a bad value' , ()=>{
+  expect(()=>{
+    const validator = (o)=>{
+      if ( o.hello === 'yes' ) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    const obj = preventUndefined({
+      hello:'yes',
+    }, validator );
+    obj.hello = 'A BAD VALUE';
+
+  }).toThrow(ReferenceError);
+});
+
+
+test( 'validator No.2 setting a correct value' , ()=>{
+  expect(()=>{
+    const validator = (o)=>{
+      if ( o.hello === 'yes' ) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    const obj = preventUndefined({
+      hello:'yes',
+    }, validator );
+    obj.hello = 'yes';
+
+  }).not.toThrow(ReferenceError);
+});
+
+
+test( 'validator No.3 the entry time validation' , ()=>{
+  expect(()=>{
+    const validator = (o)=>{
+      if ( o.hello === 'yes' ) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    const obj = preventUndefined({
+      hello:'aa',
+    }, validator );
+
+  }).toThrow(ReferenceError);
+});
+
+
+test( 'validator No.4 the entry time validation' , ()=>{
+  expect(()=>{
+    const validator = (o)=>{
+      if ( o.hello === 'yes' ) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    const obj = preventUndefined({
+      hello:'yes',
+    }, validator );
+
+  }).not.toThrow(ReferenceError);
+});
+
+
+test( 'validator No.5 check detecting modifying a nested property' , ()=>{
+  expect(()=>{
+    const validator = (o)=>{
+      if ( o.hello.foo.bar.value === 'yes' ) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    const obj = preventUndefined({
+      hello: {
+        foo : {
+          bar : {
+            value : 'yes',
+          },
+        },
+      },
+    }, validator );
+
+    obj.hello.foo.bar.value = 'a wrong value';
+
+  }).toThrow(ReferenceError);
+});
+
+
+test( 'validator No.6 check detecting modifying a nested property to a valid value' , ()=>{
+  expect(()=>{
+    const validator = (o)=>{
+      if ( o.hello.foo.bar.value === 'yes' ) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    const obj = preventUndefined({
+      hello: {
+        foo : {
+          bar : {
+            value : 'yes',
+          },
+        },
+      },
+    }, validator );
+
+    obj.hello.foo.bar.value = 'yes';
+
+  }).not.toThrow(ReferenceError);
+});
+
+
+test( 'validator No.7 check detecting deleting a nested property' , ()=>{
+  expect(()=>{
+    const validator = (o)=>{
+      if ( o.hello.foo.bar.value === 'yes' ) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    const obj = preventUndefined({
+      hello: {
+        foo : {
+          bar : {
+            value : 'yes',
+          },
+        },
+      },
+    }, validator );
+
+    Object.defineProperty( obj.hello.foo.bar,'value', {
+      value:'a bad value',
+    });
+  }).toThrow(ReferenceError);
+});
+
+
+
+test( 'validator No.8 check detecting deleting a nested property' , ()=>{
+  expect(()=>{
+    const validator = (o)=>{
+      if ( o.hello.foo.bar.value === 'yes' ) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    const obj = preventUndefined({
+      hello: {
+        foo : {
+          bar : {
+            value : 'yes',
+          },
+        },
+      },
+    }, validator );
+
+    delete obj.hello.foo.bar.value;
+
+  }).toThrow(ReferenceError);
+});
+
+
+test( 'validator No.9 check detecting throwing inside the validator' , ()=>{
+  expect(()=>{
+    const validator = (o)=>{
+      if ( o.hello.foo.bar.value === 'yes' ) {
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    const obj = preventUndefined({
+      HELLO: {
+        FOO : {
+          BAR : {
+            value : 'yes',
+          },
+        },
+      },
+    }, validator );
+
+  }).toThrow(ReferenceError);
+});

@@ -104,7 +104,29 @@ function checkIfAllPropertiesAreReferred( target, referredProps ) {
   return result;
 }
 
-function preventUndefined( argTarget, argState ){
+function parseArgs( args ) {
+  const result = {
+    target : args.shift(),
+  };
+  args = args.map( e=> typeof e === 'function' ? { validator : e } : e );
+  Object.assign( result, ...args );
+
+  if ( ! ( 'target' in result ) ) {
+    throw new ReferenceError( 'parameter target is required' );
+  }
+
+  if ( ! ( 'state' in result ) ) {
+    result.state = null;
+  }
+
+  if ( ! ( 'validator' in result ) ) {
+    result.validator = null;
+  }
+  return result;
+}
+
+function preventUndefined( ...args ) {
+  const { target:argTarget, state:argState, validator: argVali  } = parseArgs( args );
   const currTarget = argTarget;
   const currState = {
     isRootState   : true,
@@ -112,6 +134,7 @@ function preventUndefined( argTarget, argState ){
     currTarget    : currTarget,
     referredProps : {}, // the properties which have been referred so far.
     propPath      : [],
+    validator     : argVali,
 
     excludes : (n)=>{
       const stack = new Error().stack.trim().split('\n');
@@ -128,11 +151,52 @@ function preventUndefined( argTarget, argState ){
         return isOneOfWellKnownSymbols(n) || 0<=     IGNORING_KEYWORDS.indexOf(n);
       }
     },
+
     ...argState,
   };
 
+
+  const formatPropPath = (propPath)=> 'obj.' + propPath.map( e=>e!=null?e.toString():'(null)' ).join('.');
+  
+
+  const executeValidation = ( prop, msg )=>{
+    const rootState = searchRootState( currState );
+    const { validator, currTarget } = rootState;
+    if ( validator ) {
+      let result = null;
+      try {
+        result = validator( currTarget );
+      } catch (e){
+        const dump = inspect( currTarget )
+        const err = new ReferenceError( 'the given validator threw an error on\n' + dump + '\n' + validator, { cause : e });
+        console.error( err );
+        throw err;
+      }
+      if ( ! result ) {
+        const propPath = [ ...currState.propPath ] ;
+        if ( prop !== null ) {
+          propPath.push( prop );
+        }
+        const propPathStr = formatPropPath( propPath );
+        const dump = inspect( currTarget )
+
+        const errMsg = msg.replaceAll( /\$path/g, propPathStr ).replaceAll( /\$dump/g,dump ) ;
+        const err = new ReferenceError( errMsg );
+        console.error( err );
+        throw err;
+      }
+    } else {
+      // no validator is set; ignored.
+    }
+  };
+
+  // Perform the entry time validation.
+  executeValidation( null, 'failed object validation on \n$dump' );
+
   if (( typeof currTarget === 'object') && currTarget !== null && ( ! isBuiltIn( currTarget ) ) ) {
     const currHandler = {
+
+      // reading properties
       get(...args) {
         const [target, prop, receiver] = args;
         if ( prop === '__UNPREVENT__' ) {
@@ -160,12 +224,12 @@ function preventUndefined( argTarget, argState ){
         };
 
         if ( ( typeof nextTarget === 'undefined') && ! currState.excludes( prop ) ) {
-
           const targetObject = searchRootState( currState ).currTarget;
+
+          const propPathStr = formatPropPath([ ...currState.propPath, prop ]);
           const dump = inspect( targetObject );
-          const propPathStr = 'obj.' + nextState.propPath.map(e=>e!=null?e.toString():'(null)').join('.');
-          // console.error( propPathStr , 'is not defined in' , dump );
           const err = new ReferenceError( propPathStr + ' is not defined in ' + dump );
+
           // err.targetObject =  targetObject;
 
           /**
@@ -181,8 +245,28 @@ function preventUndefined( argTarget, argState ){
 
           throw err;
         } else {
-          return preventUndefined( nextTarget, nextState );
+          return preventUndefined( nextTarget, { state : nextState } );
         }
+      },
+
+      // writing properties
+      set(...args) {
+        const result = Reflect.set(...args);
+        const [ target, property, value, receiver ] = args;
+        executeValidation( property, 'detected setting an invalid property value to $path on \n$dump' );
+        return result;
+      },
+      defineProperty(...args) {
+        const result = Reflect.defineProperty( ...args );
+        const [ target, property, descriptor ] = args;
+        executeValidation( property, 'detected defining an invalid property value to $path on \n$dump' );
+        return result;
+      },
+      deleteProperty(...args) {
+        const result = Reflect.deleteProperty( ...args );
+        const [ target, property ] = args;
+        executeValidation( property, 'detected deleting an invalid property value to $path on \n$dump' );
+        return result;
       },
     };
 
