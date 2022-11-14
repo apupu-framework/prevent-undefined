@@ -216,7 +216,7 @@ non-opinionated validator [RTTI.js][]; though it is not necessary.
 
 See also [RTTI.js][]
 
-[RTTI.js]: (https://www.npmjs.com/package/rtti.js)
+[RTTI.js]: https://www.npmjs.com/package/rtti.js
 
 
 
