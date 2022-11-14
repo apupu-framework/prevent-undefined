@@ -6,7 +6,7 @@
 It also displays dump of the refered object for your convenience. See below :
 
 ```javascript
-const  { preventundefined } = require("prevent-undefined" );
+const  { preventUndefined } = require("prevent-undefined" );
 // or
 import { preventUndefined } from "prevent-undefined";
 
