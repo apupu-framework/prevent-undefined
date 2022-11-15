@@ -66,7 +66,7 @@ Sometimes, you will want to unprevent your objects especially when you want to
 use [optional chaining][]:
 
 ```javascript
-const { preventUndefined } = require('./common.js');
+const { preventUndefined } = require('prevent-undefined');
 const someObj = {
   hello : {
     world : {
@@ -105,7 +105,7 @@ which you definitely don't want.
 Use `unprevent()`
 
 ```javascript
-const  { unprevent } = require("prevent-undefined/common.js");
+const  { unprevent } = require("prevent-undefined");
 function proc(o){
   o=unprevent(o);
   return o.hello?.world?.foo?.bar?.baz?.value ?? "hello world";
@@ -151,6 +151,8 @@ someFunc({foo,bar,baz});
 In order to prevent such tiredness, use `preventUnusedProperties()`.
 
 ```javascript
+const  { preventUnusedProperties } = require("prevent-undefined");
+
 function someFunc(args){
   // Prevent undefined on the `args` object before destructuring it.
   const {foo,bar} = preventUndefined(args);
@@ -180,7 +182,7 @@ someFunc({foo,bar,baz});
 
 
 
- About Validators
+ Validators
 --------------------------------------------------------------------------------
 If you set a validator to the second parameter of `preventUndefined()`, it monitors
 every modification on the object to keep consistency of the object.
@@ -201,7 +203,7 @@ obj.foo.bar.value = 'BUMMER! NOT A NUMBER';
 > {
 >   "foo": {
 >     "bar": {
->       "value": "BLAH! NOT A NUMBER"
+>       "value": "BUMMER! NOT A NUMBER"
 >     }
 >   }
 > }
@@ -218,6 +220,7 @@ See [RTTI.js][]
 
 [RTTI.js]: https://www.npmjs.com/package/rtti.js
 
+Validators have been added in **v0.2.23**.
 
 
  errorIfUndefined()
@@ -237,7 +240,7 @@ strictFunc({ foo_WITH_TYPO: 'foo' });
 
 `errorIfUndefined` takes only one parameter : `name` which is to specify the name of the parameter.
 
-`errorIfUndefined()` **ADDED v0.2.19**.
+`errorIfUndefined()` has been added in **v0.2.19**.
 
 
  The Basic Idea of `prevent-unprevent`
@@ -276,24 +279,26 @@ At this point, you have no clue where the problem came from. At this point, you
 will never notice that some junkie made a function as following:
 
 ```javascript
-  const jOhN ={
-    NAME:'John',
-    AGE: 18,
-  };
-  const pAul ={
-    NAME:'Paul',
-    AGE: 23,
-  };
+const JOHN ={
+  name:'John',
+  age: 18,
+};
+const PAUL ={
+  name:'Paul',
+  age: 23,
+};
 
 function getYourDataFromResource(id) {
   if ( id === 'john' ) {
     return {
-      name : jOhN.namee;
+      name : JOHN.nameeeeeeeeeeeeeeeeee;
     }
-  } else if ( id ==='PaUL' ) {
+  } else if ( id ==='paul' ) {
     return {
-      name : pAul.naame;
+      name : PAUL.naaaaaaaaaaaame;
     }
+  } else {
+    // wat
   }
 }
 ```
@@ -312,12 +317,12 @@ enable 'use strict'.
 This is where `prevent-undefined` come in.
 
 ```javascript
-const jOhN = preventUndefined({
+const JOHN = preventUndefined({
   NAME:'John',
   AGE: 18,
 });
 
-const pAul = preventUndefined({
+const PAUL = preventUndefined({
   NAME:'Paul',
   AGE: 23,
 });
@@ -325,11 +330,11 @@ const pAul = preventUndefined({
 function getYourDataFromResource(id) {
   if ( id === 'john' ) {
     return {
-      name : jOhN.namee; // this throws error.
+      name : JOHN.namee; // this throws error.
     }
   } else if ( id ==='PaUL' ) {
     return {
-      name : pAul.naame; // this throws error, too.
+      name : PAUL.naame; // this throws error, too.
     }
   }
 }
