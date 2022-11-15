@@ -1,4 +1,4 @@
-import { preventUndefined, undefinedlessFunction, recursivelyUnprevent, preventUnusedProperties, errorIfUndefined, } from './index.mjs' ;
+import { preventUndefined, undefinedlessFunction, recursivelyUnprevent, preventUnusedProperties, rtti, errorIfUndefined, } from './index.mjs' ;
 
 test( '', ()=>{
   const __foo = {
@@ -476,17 +476,77 @@ test( 'sample' , ()=>{
       }
     },validator);
 
-    obj.foo.bar.value = 'BLAH! NOT A NUMBER';
+    obj.foo.bar.value = 'BUMMER! NOT A NUMBER';
 
   }).toThrow(new ReferenceError(`
 detected defining an invalid property value to obj.foo.bar.value on
 {
   "foo": {
     "bar": {
-      "value": "BLAH! NOT A NUMBER"
+      "value": "BUMMER! NOT A NUMBER"
     }
   }
 }
     `.trim()));
 });
+
+
+
+test( 'rtti' , ()=>{
+  expect( ()=>{
+    const validator = (o)=>typeof o.foo.bar.value === 'number';
+    const obj = rtti(validator, {
+      foo : {
+        bar : {
+          value : 100,
+        },
+      }
+    });
+
+    obj.foo.bar.value = 'BUMMER! NOT A NUMBER';
+
+  }).toThrow(new ReferenceError(`
+detected defining an invalid property value to obj.foo.bar.value on
+{
+  "foo": {
+    "bar": {
+      "value": "BUMMER! NOT A NUMBER"
+    }
+  }
+}
+    `.trim()));
+});
+
+
+
+
+test( 'rtti No.2 an Example' , ()=>{
+  expect( ()=>{
+    const t_user = o=>(typeof o.name === 'string') && (typeof o.age ==='number');
+
+    function check_user({user}) {
+      user = rtti( t_user, user );
+    // Setting a wrong value causes throwing an error.
+      user.name = false; 
+      return user;
+    }
+
+    check_user({
+      user:{
+        name : 'John',
+        age : 23
+      }
+    });
+
+  }).toThrow(new ReferenceError(`
+detected defining an invalid property value to obj.name on
+{
+  "name": false,
+  "age": 23
+}
+    `.trim()));
+});
+
+
+
 

@@ -16,7 +16,7 @@ function inspect(s) {
 module.exports.preventUndefined        = preventUndefined;
 module.exports.undefinedlessFunction   = undefinedlessFunction;
 module.exports.unprevent               = unprevent;
-module.exports.errorIfUndefined        = errorIfUndefined;
 module.exports.recursivelyUnprevent    = recursivelyUnprevent;
 module.exports.preventUnusedProperties = preventUnusedProperties;
-
+module.exports.rtti                    = rtti;
+module.exports.errorIfUndefined        = errorIfUndefined;

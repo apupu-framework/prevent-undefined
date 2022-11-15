@@ -223,6 +223,41 @@ See [RTTI.js][]
 Validators have been added in **v0.2.23**.
 
 
+ `prevent-undefined` as an Implementation of Runtime-Time Type Information 
+--------------------------------------------------------------------------------
+`rtti()` function is merely a forwarder to `preventUndefined()` function except
+it rearranges its arguments. While `preventUndefined()` receives the object to
+process at the first argument, `rtti()` receives it at the last argument.
+
+This is intended only for readability when `preventUndefined()` is used as
+runtime type safety protection.
+
+
+```javascript
+  const t_user = o=>(typeof o.name === 'string') && (typeof o.age ==='number');
+
+  function check_user({user}) {
+    user = rtti( t_user, user );
+    // Setting a wrong value causes throwing an error.
+    user.name = false; 
+    return user;
+  }
+
+  check_user({
+    user:{
+      name : 'John',
+      age : 23
+    }
+  });
+
+> detected defining an invalid property value to obj.name on
+> {
+>   "name": false,
+>   "age": 23
+> }
+```
+
+
  errorIfUndefined()
 --------------------------------------------------------------------------------
 `errorIfUndefined()` is a perfect fancy mascot to implement 
@@ -243,7 +278,7 @@ strictFunc({ foo_WITH_TYPO: 'foo' });
 `errorIfUndefined()` has been added in **v0.2.19**.
 
 
- The Basic Idea of `prevent-unprevent`
+ The Basic Idea of `prevent-undefined`
 --------------------------------------------------------------------------------
 IMHO, `undefined` is always evil:
 
@@ -276,7 +311,8 @@ IMHO, `undefined` is always evil:
 ```
 
 At this point, you have no clue where the problem came from. At this point, you
-will never notice that some junkie made a function as following:
+will never notice that some specific unenthusiastic programmer made a function
+as following:
 
 ```javascript
 const JOHN ={
@@ -486,6 +522,10 @@ Updated README.md.
 #### v0.2.23 ####
 (Mon, 14 Nov 2022 17:25:30 +0900)
 Supported validators.
+
+#### v0.2.24 ####
+(Mon, 14 Nov 2022 17:25:30 +0900)
+Supported `rtti`.
 
  Conclusion
 --------------------------------------------------------------------------------

@@ -11,11 +11,13 @@ function inspect(s) {
 
 <%=body%>
 
+
 export {
   preventUndefined ,
   undefinedlessFunction ,
   unprevent,
-  errorIfUndefined,
   recursivelyUnprevent,
   preventUnusedProperties,
+  rtti,
+  errorIfUndefined,
 };
