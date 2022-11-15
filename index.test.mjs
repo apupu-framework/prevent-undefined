@@ -1,4 +1,4 @@
-import { preventUndefined, undefinedlessFunction, recursivelyUnprevent, preventUnusedProperties, rtti, errorIfUndefined, } from './index.mjs' ;
+import { preventUndefined, undefinedlessFunction, recursivelyUnprevent, preventUnusedProperties, typesafe, errorIfUndefined, } from './index.mjs' ;
 
 test( '', ()=>{
   const __foo = {
@@ -492,10 +492,10 @@ detected defining an invalid property value to obj.foo.bar.value on
 
 
 
-test( 'rtti' , ()=>{
+test( 'typesafe' , ()=>{
   expect( ()=>{
     const validator = (o)=>typeof o.foo.bar.value === 'number';
-    const obj = rtti(validator, {
+    const obj = typesafe(validator, {
       foo : {
         bar : {
           value : 100,
@@ -520,12 +520,12 @@ detected defining an invalid property value to obj.foo.bar.value on
 
 
 
-test( 'rtti No.2 an Example' , ()=>{
+test( 'typesafe No.2 an Example' , ()=>{
   expect( ()=>{
     const t_user = o=>(typeof o.name === 'string') && (typeof o.age ==='number');
 
     function check_user({user}) {
-      user = rtti( t_user, user );
+      user = typesafe( t_user, user );
     // Setting a wrong value causes throwing an error.
       user.name = false; 
       return user;

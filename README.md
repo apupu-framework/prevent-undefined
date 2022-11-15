@@ -225,9 +225,9 @@ Validators have been added in **v0.2.23**.
 
  `prevent-undefined` as an Implementation of Runtime-Time Type Information 
 --------------------------------------------------------------------------------
-`rtti()` function is merely a forwarder to `preventUndefined()` function except
+`typesafe()` function is merely a forwarder to `preventUndefined()` function except
 it rearranges its arguments. While `preventUndefined()` receives the object to
-process at the first argument, `rtti()` receives it at the last argument.
+process at the first argument, `typesafe()` receives it at the last argument.
 
 This is intended only for readability when `preventUndefined()` is used as
 runtime type safety protection.
@@ -237,7 +237,7 @@ runtime type safety protection.
   const t_user = o=>(typeof o.name === 'string') && (typeof o.age ==='number');
 
   function check_user({user}) {
-    user = rtti( t_user, user );
+    user = typesafe( t_user, user );
     // Setting a wrong value causes throwing an error.
     user.name = false; 
     return user;
@@ -524,8 +524,13 @@ Updated README.md.
 Supported validators.
 
 #### v0.2.24 ####
-(Mon, 14 Nov 2022 17:25:30 +0900)
+(Tue, 15 Nov 2022 16:03:18 +0900)
 Supported `rtti`.
+
+#### v0.2.25 ####
+(Tue, 15 Nov 2022 16:08:53 +0900)
+`rtti` is renamed to `typesafe`.
+
 
  Conclusion
 --------------------------------------------------------------------------------

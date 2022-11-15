@@ -18,6 +18,7 @@ export {
   unprevent,
   recursivelyUnprevent,
   preventUnusedProperties,
+  typesafe,
   rtti,
   errorIfUndefined,
 };

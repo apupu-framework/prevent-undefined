@@ -318,12 +318,13 @@ function preventUnusedProperties( o ) {
   }
 }
 
-function rtti(...args) {
+function typesafe(...args) {
   if( 0 < args.length ) {
     args.unshift( args.pop() );
   }
   return preventUndefined( ...args );
 }
+const rtti = typesafe;
 
 const errorIfUndefined = name=>{throw new ReferenceError(`the parameter value of ${name} was undefined; any reference to an undefined value is strictly prohibited on this object.`)};
 
@@ -335,5 +336,6 @@ module.exports.undefinedlessFunction   = undefinedlessFunction;
 module.exports.unprevent               = unprevent;
 module.exports.recursivelyUnprevent    = recursivelyUnprevent;
 module.exports.preventUnusedProperties = preventUnusedProperties;
+module.exports.typesafe                = typesafe;
 module.exports.rtti                    = rtti;
 module.exports.errorIfUndefined        = errorIfUndefined;

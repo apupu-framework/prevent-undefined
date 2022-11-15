@@ -1,4 +1,4 @@
 params: body
-const { preventUndefined, undefinedlessFunction, recursivelyUnprevent, preventUnusedProperties, rtti, errorIfUndefined, } = require( './index.cjs' );
+const { preventUndefined, undefinedlessFunction, recursivelyUnprevent, preventUnusedProperties, typesafe, errorIfUndefined, } = require( './index.cjs' );
 
 <%=body %>
