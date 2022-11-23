@@ -271,7 +271,7 @@ Started from **v0.2.27**, you can specify an event handler when you call
     }
   });
 
-  obj.wrongProp = true;
+  console.error( "peekaboo! ",  obj.wrongProp ); 
 
 > "called wrongProp"
 >
