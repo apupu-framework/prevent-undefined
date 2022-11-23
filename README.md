@@ -531,6 +531,12 @@ Supported `rtti`.
 (Tue, 15 Nov 2022 16:08:53 +0900)
 `rtti` is renamed to `typesafe`.
 
+#### v0.2.26 ####
+(Wed, 23 Nov 2022 19:15:59 +0900)
+Now `preventUndefined` displays the stacktrace not only where the illegal
+access is occured but where the object is protected by `preventUndefined()`,
+too. Hopefully this will let you know where your problematic object comes from.
+
 
  Conclusion
 --------------------------------------------------------------------------------

@@ -463,8 +463,28 @@ test( 'validator No.9 check detecting throwing inside the validator' , ()=>{
 });
 
 
+function cropStacktrace(e) {
+  const result = /\[stacktrace\]/g.exec( e.message );
+  // console.error( result );
+  if ( result && 0<=result.index ) {
+   e.message = e.message.substring( 0, result.index ).trim();
+  }
+  // console.error(e.message);
+  return e;
+}
+function protectByCroppingStacktrace(f){
+  return ()=>{
+    try{
+      f();
+    } catch(e){
+      throw cropStacktrace(e);
+    }
+  };
+}
+
+
 test( 'sample' , ()=>{
-  expect( ()=>{
+  expect( protectByCroppingStacktrace(()=>{
     const validator = (o)=>typeof o.foo.bar.value === 'number';
     const obj = preventUndefined({
       foo : {
@@ -476,7 +496,7 @@ test( 'sample' , ()=>{
 
     obj.foo.bar.value = 'BUMMER! NOT A NUMBER';
 
-  }).toThrow(new ReferenceError(`
+  })).toThrow(new ReferenceError(`
 detected defining an invalid property value to obj.foo.bar.value on
 {
   "foo": {
@@ -491,7 +511,7 @@ detected defining an invalid property value to obj.foo.bar.value on
 
 
 test( 'typesafe' , ()=>{
-  expect( ()=>{
+  expect( protectByCroppingStacktrace(()=>{
     const validator = (o)=>typeof o.foo.bar.value === 'number';
     const obj = typesafe(validator, {
       foo : {
@@ -503,7 +523,7 @@ test( 'typesafe' , ()=>{
 
     obj.foo.bar.value = 'BUMMER! NOT A NUMBER';
 
-  }).toThrow(new ReferenceError(`
+  })).toThrow(new ReferenceError(`
 detected defining an invalid property value to obj.foo.bar.value on
 {
   "foo": {
@@ -517,9 +537,8 @@ detected defining an invalid property value to obj.foo.bar.value on
 
 
 
-
 test( 'typesafe No.2 an Example' , ()=>{
-  expect( ()=>{
+  expect( protectByCroppingStacktrace(()=>{
     const t_user = o=>(typeof o.name === 'string') && (typeof o.age ==='number');
 
     function check_user({user}) {
@@ -535,8 +554,7 @@ test( 'typesafe No.2 an Example' , ()=>{
         age : 23
       }
     });
-
-  }).toThrow(new ReferenceError(`
+  })).toThrow(new ReferenceError(`
 detected defining an invalid property value to obj.name on
 {
   "name": false,

@@ -125,10 +125,15 @@ function parseArgs( args ) {
   return result;
 }
 
+function processStack( stack ) {
+  return stack.split( '\n' ).slice(1).join('\n');
+}
+
 function preventUndefined( ...args ) {
   const { target:argTarget, state:argState, validator: argVali  } = parseArgs( args );
   const currTarget = argTarget;
   const currState = {
+    // the default values >>>
     isRootState   : true,
     parentState   : null,
     currTarget    : currTarget,
@@ -151,17 +156,23 @@ function preventUndefined( ...args ) {
         return isOneOfWellKnownSymbols(n) || 0<=     IGNORING_KEYWORDS.indexOf(n);
       }
     },
+    // the default values <<<
 
+    // the overriding values >>>
     ...argState,
+    // the overriding values <<<
   };
 
+  if ( currState.isRootState ) {
+    currState.stackOnCreated = new Error().stack;
+  }
 
   const formatPropPath = (propPath)=> 'obj.' + propPath.map( e=>e!=null?e.toString():'(null)' ).join('.');
   
 
   const executeValidation = ( prop, msg )=>{
     const rootState = searchRootState( currState );
-    const { validator, currTarget } = rootState;
+    const { validator, currTarget, stackOnCreated } = rootState;
     if ( validator ) {
       let result = null;
       try {
@@ -178,9 +189,14 @@ function preventUndefined( ...args ) {
           propPath.push( prop );
         }
         const propPathStr = formatPropPath( propPath );
-        const dump = inspect( currTarget )
+        const dumpOfTarget = inspect( currTarget )
+        const dumpOfCreated = processStack( stackOnCreated )
 
-        const errMsg = msg.replaceAll( /\$path/g, propPathStr ).replaceAll( /\$dump/g,dump ) ;
+        const errMsg = msg
+          .replaceAll( /\$path/g, propPathStr )
+          .replaceAll( /\$target/g, dumpOfTarget ) 
+          .replaceAll( /\$created/g, dumpOfCreated )
+        ;
         const err = new ReferenceError( errMsg );
         console.error( err );
         throw err;
@@ -191,7 +207,7 @@ function preventUndefined( ...args ) {
   };
 
   // Perform the entry time validation.
-  executeValidation( null, 'failed object validation on\n$dump' );
+  executeValidation( null, 'failed object validation on\n$target\noccured on' );
 
   if (( typeof currTarget === 'object') && currTarget !== null && ( ! isBuiltIn( currTarget ) ) ) {
     const currHandler = {
@@ -224,13 +240,15 @@ function preventUndefined( ...args ) {
         };
 
         if ( ( typeof nextTarget === 'undefined') && ! currState.excludes( prop ) ) {
-          const targetObject = searchRootState( currState ).currTarget;
+          const rootState = searchRootState( currState );
+          const { currTarget, stackOnCreated } = rootState;
 
           const propPathStr = formatPropPath([ ...currState.propPath, prop ]);
-          const dump = inspect( targetObject );
-          const err = new ReferenceError( propPathStr + ' is not defined in ' + dump );
+          const dumpOfTarget = inspect( currTarget );
+          const dumpOfCreated = processStack( stackOnCreated );
+          const err = new ReferenceError( propPathStr + ' is not defined in ' + dumpOfTarget + '\n[stacktrace]\ncreated on\n' + dumpOfCreated + '\n\noccured on' );
 
-          // err.targetObject =  targetObject;
+          // err.currTarget =  currTarget;
 
           /**
            * (Fri, 21 Oct 2022 14:37:14 +0900)
@@ -253,19 +271,19 @@ function preventUndefined( ...args ) {
       set(...args) {
         const result = Reflect.set(...args);
         const [ target, property, value, receiver ] = args;
-        executeValidation( property, 'detected setting an invalid property value to $path on\n$dump' );
+        executeValidation( property, 'detected setting an invalid property value to $path on\n$target\n[stacktrace]\ncreated on\n$created\noccured on' );
         return result;
       },
       defineProperty(...args) {
         const result = Reflect.defineProperty( ...args );
         const [ target, property, descriptor ] = args;
-        executeValidation( property, 'detected defining an invalid property value to $path on\n$dump' );
+        executeValidation( property, 'detected defining an invalid property value to $path on\n$target\n[stacktrace]\ncreated on\n$created\noccured on' );
         return result;
       },
       deleteProperty(...args) {
         const result = Reflect.deleteProperty( ...args );
         const [ target, property ] = args;
-        executeValidation( property, 'detected deleting an invalid property value to $path on\n$dump' );
+        executeValidation( property, 'detected deleting an invalid property value to $path on\n$target\n[stacktrace]\ncreated on\n$created\noccured on' );
         return result;
       },
     };
