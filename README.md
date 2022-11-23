@@ -257,6 +257,82 @@ runtime type safety protection.
 > }
 ```
 
+  `onError`
+--------------------------------------------------------------------------------
+Started from **v0.2.27**, you can specify an event handler when you call
+`preventUndefined()`:
+```javascript
+  const obj = preventUndefined({
+    foo: 'foo',
+    bar: 'bar',
+  }, {
+    onError: (info)=>{
+      console.error( 'called ' + info.propPath  );
+    }
+  });
+
+  obj.wrongProp = true;
+
+> "called wrongProp"
+>
+> ReferenceError: [prevent-undefined] obj.wrongProp is not defined in {
+>   "foo": "foo",
+>   "bar": "bar"
+> }
+> [stacktrace]
+> ...
+```
+
+Some information about the error which has just occured is available as the
+properties on the first argument of the event handler.
+
+#### `propPath` ####
+`propPath` property is an array object which consists the property names.
+
+```javascript
+  const onError(info)=>{
+    console.error(info.propPath); // 
+  };
+  const someObj = {
+    hello : {
+      world : {
+        foo : {
+          bar : {
+            baz : "HELLO",
+          },
+        }
+      }
+    }
+  };
+
+  preventUndefined( someObj,{onError}).hello.world.foo.bar.VAZ;
+  //                                      SOME TYPO AGAIN  ^^^
+```
+
+then, you'll get
+
+```javascript
+> hello.world.foo.bar.VAZ
+```
+
+#### `target` ####
+`target` property is the target object which you specify as the first argument
+when you call `preventUndefined()`.
+
+#### `message` ####
+`message` property is the string value on the message property on the error
+object which is thrown.
+
+#### `stackOnCreated` ####
+`stackOnCreated` is an array object which consists the stacktrace when
+`preventUndefined()` is called.
+
+#### `stackOnOccured` ####
+`stackOnOccured` is an array object which consists the stacktrace when the
+illegal access on the target object is occured.
+
+`event handler` started from **v0.2.27**
+
 
  errorIfUndefined()
 --------------------------------------------------------------------------------

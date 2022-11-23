@@ -499,7 +499,7 @@ test( 'sample' , ()=>{
     obj.foo.bar.value = 'BUMMER! NOT A NUMBER';
 
   })).toThrow(new ReferenceError(`
-detected defining an invalid property value to obj.foo.bar.value on
+[prevent-undefined] detected defining an invalid property value to obj.foo.bar.value on
 {
   "foo": {
     "bar": {
@@ -526,7 +526,7 @@ test( 'typesafe' , ()=>{
     obj.foo.bar.value = 'BUMMER! NOT A NUMBER';
 
   })).toThrow(new ReferenceError(`
-detected defining an invalid property value to obj.foo.bar.value on
+[prevent-undefined] detected defining an invalid property value to obj.foo.bar.value on
 {
   "foo": {
     "bar": {
@@ -557,13 +557,124 @@ test( 'typesafe No.2 an Example' , ()=>{
       }
     });
   })).toThrow(new ReferenceError(`
-detected defining an invalid property value to obj.name on
+[prevent-undefined] detected defining an invalid property value to obj.name on
 {
   "name": false,
   "age": 23
 }
     `.trim()));
 });
+
+
+
+
+test( 'onError test No.1' , ()=>{
+  return new Promise((resolve,reject)=>{
+
+    let flag = null;
+    let err = null;
+
+    const validator = o=>(typeof o.name === 'string') && (typeof o.age ==='number');
+    const onError = ()=>{
+      flag = true;
+    };
+
+    function check_user({user}) {
+      user = preventUndefined( user, { validator, onError });
+      // Setting a wrong value causes throwing an error.
+      user.name = false; 
+      return user;
+    }
+
+    try{
+      check_user({
+        user:{
+          name : 'John',
+          age : 23
+        }
+      });
+    } catch(e){
+      err = e;
+    }
+
+    setTimeout( ()=>{
+      if (
+        ( flag === true ) &&
+        ( err !=null ) &&
+        ( 0<= err.message.indexOf( '[prevent-undefined]' ) )
+      ) {
+        resolve();
+      } else {
+        reject();
+      }
+    }, 200 );
+
+  });
+});
+
+
+test( 'onError test No.2' , ()=>{
+  return new Promise((resolve,reject)=>{
+
+    let flag = null;
+    let err = null;
+
+    const validator = o=>(typeof o.name === 'string') && (typeof o.age ==='number');
+    const onError = ()=>{
+      flag = true;
+    };
+
+    function check_user({user}) {
+      user = preventUndefined( user, { validator, onError });
+      // Setting a wrong value causes throwing an error.
+      const val =  user.WRONG_PROP;
+      return user;
+    }
+
+    try{
+      check_user({
+        user:{
+          name : 'John',
+          age : 23
+        }
+      });
+    } catch(e){
+      err = e;
+    }
+
+    setTimeout( ()=>{
+      if (
+        ( flag === true ) &&
+        ( err !=null ) &&
+        ( 0<= err.message.indexOf( '[prevent-undefined]' ) )
+      ) {
+        resolve();
+      } else {
+        reject(`flag=${flag} err=${err}`);
+      }
+    }, 200 );
+
+  });
+});
+
+/*
+ * TODO test all properties of the argument of `onError()`
+ */
+
+
+// test( 'onError example', ()=>{
+//   const obj = preventUndefined({
+//     foo: 'foo',
+//     bar: 'bar',
+//   }, {
+//     onError: (info)=>{
+//       console.error( 'called ' + info.propPath );
+//     }
+//   });
+// 
+//   console.error( obj.wrongProp );
+// 
+// });
 
 
 
