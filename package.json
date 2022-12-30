@@ -1,6 +1,6 @@
 {
   "name": "prevent-undefined",
-  "version": "0.2.27",
+  "version": "0.2.28",
   "description": "prevent-undefined makes objects to throw errors when any code refers an undefined propery on it.",
   "main": "index.mjs",
   "type": "module",
@@ -19,6 +19,12 @@
     "test": "npm run make; npm run test-cs; npm run test-es6",
     "make": "node ./make.js"
   },
+  "files": [
+    "README.md",
+    "index.cjs",
+    "index.mjs",
+    "package.json"
+  ],
   "jest": {
     "moduleFileExtensions": [
       "js",

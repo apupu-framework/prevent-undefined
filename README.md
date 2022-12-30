@@ -613,6 +613,13 @@ Now `preventUndefined` displays the stacktrace not only where the illegal
 access is occured but where the object is protected by `preventUndefined()`,
 too. Hopefully this will let you know where your problematic object comes from.
 
+#### v0.2.27 ####
+Added the error handler `onError()`.
+
+#### v0.2.28 ####
+(Fri, 30 Dec 2022 11:44:22 +0900)
+Removed unnecessary files from the package.
+
 
  Conclusion
 --------------------------------------------------------------------------------
