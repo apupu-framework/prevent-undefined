@@ -225,6 +225,9 @@ Validators have been added in **v0.2.23**.
 
  `prevent-undefined` as an Implementation of Runtime-Time Type Information 
 --------------------------------------------------------------------------------
+
+> **DEPRECATED** `typesafe()` is deprecated on v0.2.29. Use `preventUndefined`.
+
 `typesafe()` function is merely a forwarder to `preventUndefined()` function except
 it rearranges its arguments. While `preventUndefined()` receives the object to
 process at the first argument, `typesafe()` receives it at the last argument.
@@ -256,6 +259,7 @@ runtime type safety protection.
 >   "age": 23
 > }
 ```
+
 
   `onError`
 --------------------------------------------------------------------------------
@@ -619,6 +623,10 @@ Added the error handler `onError()`.
 #### v0.2.28 ####
 (Fri, 30 Dec 2022 11:44:22 +0900)
 Removed unnecessary files from the package.
+
+#### v0.2.29 ####
+(Fri, 30 Dec 2022 14:02:41 +0900)
+Deprecated `typesafe`.
 
 
  Conclusion
