@@ -8,6 +8,9 @@ function inspect(s) {
 
 
 
+const __UNPREVENT__                            = Symbol.for( '__UNPREVENT__' );
+const __IS_PREVENTED_UNDEFINED__               = Symbol.for( '__IS_PREVENTED_UNDEFINED__' );
+const __CHECK_IF_ALL_PROPERTIES_ARE_REFERRED__ = Symbol.for( '__CHECK_IF_ALL_PROPERTIES_ARE_REFERRED__' );
 
 function searchRootState( currState ) {
   if ( currState.isRootState ) {
@@ -22,7 +25,7 @@ const AsyncFunction = (async function () {}).constructor;
 function isBuiltIn( t ) {
   if ( t == null ) return false;
   return (
-         ( t.__IS_PREVENTED_UNDEFINED__ )
+         ( t[__IS_PREVENTED_UNDEFINED__] )
     || ( ( typeof Date                   === 'function' ) && ( t instanceof Date                    ) )
     || ( ( typeof Number                 === 'function' ) && ( t instanceof Number                  ) )
     || ( ( typeof BigInt                 === 'function' ) && ( t instanceof BigInt                  ) )
@@ -265,16 +268,17 @@ function preventUndefined( ...args ) {
   if (( typeof currTarget === 'object') && currTarget !== null && ( ! isBuiltIn( currTarget ) ) ) {
     const currHandler = {
 
+
       // reading properties
       get(...args) {
         const [target, prop, receiver] = args;
-        if ( prop === '__UNPREVENT__' ) {
+        if ( prop === __UNPREVENT__ ) {
           return currTarget;
         }
-        if ( prop === '__IS_PREVENTED_UNDEFINED__' ) {
+        if ( prop === __IS_PREVENTED_UNDEFINED__ ) {
           return true;
         }
-        if ( prop === '__CHECK_IF_ALL_PROPERTIES_ARE_REFERRED__' ) {
+        if ( prop === __CHECK_IF_ALL_PROPERTIES_ARE_REFERRED__ ) {
           return checkIfAllPropertiesAreReferred( target, currState.referredProps );
         }
 
@@ -363,8 +367,8 @@ function preventUndefined( ...args ) {
 }
 
 function unprevent(o) {
-  if ( o && o.__IS_PREVENTED_UNDEFINED__ ) {
-    return unprevent( o.__UNPREVENT__ );
+  if ( o && o[__IS_PREVENTED_UNDEFINED__] ) {
+    return unprevent( o[__UNPREVENT__] );
   } else {
     return o;
   }
@@ -390,11 +394,11 @@ function recursivelyUnprevent( o ) {
 }
 
 function preventUnusedProperties( o ) {
-  if ( ! o.__IS_PREVENTED_UNDEFINED__ )
+  if ( ! o[__IS_PREVENTED_UNDEFINED__] )
     throw new TypeError('this object is not prevented undefined');
-  const result = o.__CHECK_IF_ALL_PROPERTIES_ARE_REFERRED__;
+  const result = o[__CHECK_IF_ALL_PROPERTIES_ARE_REFERRED__];
   if ( result.length !== 0 ) {
-    const dump = inspect( o.__UNPREVENT__ , {depth:null,breakLength:80});
+    const dump = inspect( o[__UNPREVENT__] , {depth:null,breakLength:80});
     if ( result.length === 1 ) {
       throw new ReferenceError( 'the field [' + result[0] + '] was not referred in\n' + dump );
     } else {

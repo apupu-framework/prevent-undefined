@@ -677,3 +677,18 @@ test( 'onError test No.2' , ()=>{
 
 
 
+test( 'automatic unprevent for functions', ()=>{
+  const o = preventUndefined({
+    foo : {
+      bar : {
+        func : function foo_bar_func() {
+          return !!this[Symbol.for('__IS_PREVENTED_UNDEFINED__')];
+        },
+      },
+    },
+  });
+
+  expect( o.foo.bar.func() ).toBe( true );
+});
+
+
