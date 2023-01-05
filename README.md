@@ -218,7 +218,7 @@ non-opinionated validator [RTTI.js][]; though it is not mandatory.
 
 See [RTTI.js][]
 
-[RTTI.js]: https://www.npmjs.com/package/rtti.js
+[RTTI.js]: https://www.npmjs.com/package/vanilla-schema-validator  
 
 Validators have been added in **v0.2.23**.
 
@@ -226,7 +226,7 @@ Validators have been added in **v0.2.23**.
  `prevent-undefined` as an Implementation of Runtime-Time Type Information 
 --------------------------------------------------------------------------------
 
-> **DEPRECATED** `typesafe()` is deprecated on v0.2.29. Use `preventUndefined`.
+> **DEPRECATED** `typesafe()` is deprecated on v0.2.29. Use `preventUndefined()`.
 
 `typesafe()` function is merely a forwarder to `preventUndefined()` function except
 it rearranges its arguments. While `preventUndefined()` receives the object to
@@ -627,6 +627,10 @@ Removed unnecessary files from the package.
 #### v0.2.29 ####
 (Fri, 30 Dec 2022 14:02:41 +0900)
 Deprecated `typesafe`.
+
+#### v0.2.30 ####
+Fixed `README.md`; changed the link to the recommended library for validation
+from `rtti.js` to `vanilla-schema-validator` due to deprecation of `rtti.js`.
 
 
  Conclusion
