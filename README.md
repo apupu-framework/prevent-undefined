@@ -629,8 +629,15 @@ Removed unnecessary files from the package.
 Deprecated `typesafe`.
 
 #### v0.2.30 ####
-Fixed `README.md`; changed the link to the recommended library for validation
-from `rtti.js` to `vanilla-schema-validator` due to deprecation of `rtti.js`.
+- Fixed `README.md`; changed the link to the recommended library for validation
+  from `rtti.js` to `vanilla-schema-validator` due to deprecation of `rtti.js`.
+- Use Symbol.for() for all iternal properties of `prevent-undefined`.
+  (Thu, 05 Jan 2023 11:45:45 +0900)
+- Now it protects function objects. 
+- Now it honors Proxy invariants. 
+  See the reference :
+  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy/get
+
 
 
  Conclusion

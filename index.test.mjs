@@ -684,13 +684,79 @@ test( 'automatic unprevent for functions', ()=>{
     foo : {
       bar : {
         func : function foo_bar_func() {
-          return !!this[Symbol.for('__IS_PREVENTED_UNDEFINED__')];
+          console.error( 
+            `this[Symbol.for('__IS_PREVENTED_UNDEFINED__')]`, 
+             this[Symbol.for('__IS_PREVENTED_UNDEFINED__')] ,
+            ' ^^^ should be undefined ^^^' ,
+          );
+          return !! this[Symbol.for('__IS_PREVENTED_UNDEFINED__')];
         },
       },
     },
   });
 
-  expect( o.foo.bar.func() ).toBe( true );
+  debugger;
+  console.error( o.foo.bar      );
+  console.error( o.foo.bar.func );
+
+  expect( o.foo.bar.func() ).toBe( false );
 });
 
+
+
+test( 'automatically unprevent for functions', ()=>{
+  const o = preventUndefined({
+    foo : {
+      bar : {
+        func : function foo_bar_func() {
+          console.error( 
+            `this[Symbol.for('__IS_PREVENTED_UNDEFINED__')]`, 
+             this[Symbol.for('__IS_PREVENTED_UNDEFINED__')] ,
+            ' ^^^ should be undefined ^^^' ,
+          );
+          return !! this[Symbol.for('__IS_PREVENTED_UNDEFINED__')];
+        },
+      },
+    },
+  });
+
+  debugger;
+  console.error( o.foo.bar      );
+  console.error( o.foo.bar.func );
+
+  expect( o.foo.bar.func() ).toBe( false );
+});
+
+// ADDED ON (Thu, 05 Jan 2023 14:18:29 +0900)
+test( 'non-writable and non-configurable ', ()=>{
+  const target ={};
+  const test_content  = {
+    foo : {
+      bar : {
+        func : function fooo_bar_func() {
+          return 'foo_bar';
+        }
+      }
+    }
+  };
+
+  Object.defineProperty( target ,'hello', {
+    value : test_content,
+    writable     : false,
+    configurable : false,
+  });
+
+  const  obj = preventUndefined( target );
+  expect( obj.hello.foo.bar.func() ).toBe( 'foo_bar' );
+
+});
+
+
+// ADDED ON (Thu, 05 Jan 2023 15:12:03 +0900) ignore function.prototype
+test( 'ignore functions in order to (mostly) unprevent `prototype` ', ()=>{
+  function target() {
+  }
+  const  obj = preventUndefined( target );
+  expect( !! obj.prototype[ Symbol.for('__IS_PREVENTED_UNDEFINED__') ] ).toBe( false );
+});
 

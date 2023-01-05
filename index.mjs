@@ -265,13 +265,58 @@ function preventUndefined( ...args ) {
   // Perform the entry time validation.
   executeValidation( null, '[prevent-undefined] failed object validation on\n$target\noccured on' );
 
-  if (( typeof currTarget === 'object') && currTarget !== null && ( ! isBuiltIn( currTarget ) ) ) {
+  if (
+    ( 
+      ( typeof currTarget === 'object') ||
+      ( typeof currTarget === 'function' )
+    ) && 
+    ( currTarget !== null ) && 
+    ( ! isBuiltIn( currTarget ) ) 
+  ) {
     const currHandler = {
-
+      // unprevent `this` when it calls the function.
+      apply : function apply( target, this_arg, args ) {
+        return target.apply( unprevent( this_arg ), args );
+      },
 
       // reading properties
       get(...args) {
         const [target, prop, receiver] = args;
+
+        // ADDED ON (Thu, 05 Jan 2023 14:18:29 +0900)
+        /*
+         * See https://github.com/patriksimek/vm2/issues/62
+         *
+         * See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy/get
+         *
+         * ### (quote) ###
+         * - The value reported for a property must be the same as the value of
+         *   the corresponding target object property if the target object
+         *   property is a non-writable, non-configurable own data property.
+         * - The value reported for a property must be undefined if the
+         *   corresponding target object property is a non-configurable own
+         *   accessor property that has undefined as its Get attribute.
+         * ### (quote) ###
+         */
+        {
+          const desc = Object.getOwnPropertyDescriptor( target, prop );
+          if ( desc && desc.configurable === false && desc.writable === false ) {
+            return Reflect.get(...args);
+          }
+        }
+
+        /* 
+         * ADDED ON (Thu, 05 Jan 2023 15:12:03 +0900) 
+         * Ignore `prototype` when the target object is a function; preventing
+         * undefined values on `prototype` is known to be problematic.  See the
+         * comment on the commit. 
+         */
+        {
+          if ( (typeof target === 'function' ) && ( prop === 'prototype' ) ) {
+            return Reflect.get(...args);
+          }
+        }
+
         if ( prop === __UNPREVENT__ ) {
           return currTarget;
         }
@@ -286,7 +331,7 @@ function preventUndefined( ...args ) {
         currState.referredProps[prop] = true;
 
         const propPath = [ ...currState.propPath, prop ];
-        const nextTarget = Reflect.get(...arguments);
+        const nextTarget = Reflect.get(...args);
         const nextState = {
           ...currState,
           isRootState   : false,
