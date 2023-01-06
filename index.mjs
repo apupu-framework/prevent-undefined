@@ -311,6 +311,18 @@ function preventUndefined( ...args ) {
          * undefined values on `prototype` is known to be problematic.  See the
          * comment on the commit. 
          */
+
+        /*
+         * not only does wrapping `prototype` causes problems but other
+         * properties on functions, too; though, it is not clear which property
+         * causes the issue. Removed the `prop==='prototype'` part. 
+         * (Thu, 05 Jan 2023 17:26:25 +0900)
+         */
+
+        /*
+         * `prop==='prototype'` was revived after the comment above was written.
+         * (Fri, 06 Jan 2023 21:28:12 +0900)
+         */
         {
           if ( (typeof target === 'function' ) && ( prop === 'prototype' ) ) {
             return Reflect.get(...args);
