@@ -818,7 +818,11 @@ test( 'ignore functions in order to (mostly) unprevent `prototype` ', ()=>{
 {
   const __IS_PREVENTED_UNDEFINED__               = Symbol.for( '__IS_PREVENTED_UNDEFINED__' );
 
-  test('inherit proxy class test 1', ()=>{
+  test( 'inherit proxy class test 1', ()=>{
+    /*
+     * Check if it works properly even if the parent class of a class is
+     * protected by preventUndefined(). 
+     */
     class A {
       constructor() {
         this.a=1;
@@ -841,15 +845,18 @@ test( 'ignore functions in order to (mostly) unprevent `prototype` ', ()=>{
     }
     debugger;
 
-    console.error( PA[__IS_PREVENTED_UNDEFINED__] );
-    console.error( Object.hasOwn( PA, __IS_PREVENTED_UNDEFINED__ ) );
+    console.error( isUndefinedPrevented( A ) );
+    console.error( isUndefinedPrevented( PA ) );
 
     debugger;
-    expect( Object.hasOwn( A,  __IS_PREVENTED_UNDEFINED__ ) ).toBe(false);
-    expect( Object.hasOwn( PA, __IS_PREVENTED_UNDEFINED__ ) ).toBe(true);
-    expect( Object.hasOwn( PB, __IS_PREVENTED_UNDEFINED__ ) ).toBe(false);
 
-    expect( PB[ __IS_PREVENTED_UNDEFINED__ ] ).toBe(false);
+    expect( isUndefinedPrevented( A  ) ).toBe(false);
+    expect( isUndefinedPrevented( PA ) ).toBe(true);
+    expect( isUndefinedPrevented( PB ) ).toBe(false);
+
+    // This undefined value comes from A class. There is no way to intercept
+    // accessing fields to get own values of objects in JavaScript.
+    expect( PB[ __IS_PREVENTED_UNDEFINED__ ] ).toBe( undefined );
 
     expect( isUndefinedPrevented( PB ) ).toBe( false );
 

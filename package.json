@@ -17,7 +17,7 @@
     "debug-test-es6": "NODE_OPTIONS='--experimental-vm-modules' node inspect /usr/local/bin/jest index.test.mjs --testNamePattern='automatic.*'",
     "debug-test-cs": "                                          node inspect /usr/local/bin/jest index.test.cjs --testNamePattern='automatic.*'",
     "test-es6": "NODE_OPTIONS='--experimental-vm-modules' node /usr/local/bin/jest index.test.mjs",
-    "test-cs": "                                          node inspect /usr/local/bin/jest index.test.cjs --testNamePattern='inherit proxy class test.*'",
+    "test-cs": "                                          node /usr/local/bin/jest index.test.cjs",
     "test": "npm run make; npm run test-cs; npm run test-es6",
     "make": "node ./make.js"
   },

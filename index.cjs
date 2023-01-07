@@ -379,7 +379,7 @@ function preventUndefined( ...args ) {
           return currTarget;
         }
         if ( prop === __IS_PREVENTED_UNDEFINED__ ) {
-          return true;
+          return undefined;
         }
         if ( prop === __CHECK_IF_ALL_PROPERTIES_ARE_REFERRED__ ) {
           return checkIfAllPropertiesAreReferred( target, currState.referredProps );
@@ -464,7 +464,7 @@ function preventUndefined( ...args ) {
       },
 
       getOwnPropertyDescriptor( ...args ) {
-        const { target, prop } = args; 
+        const [ target, prop ] = args; 
         if ( prop === __IS_PREVENTED_UNDEFINED__ ) {
           return {
             value : true,
@@ -481,47 +481,23 @@ function preventUndefined( ...args ) {
       ownKeys(...args) {
         const result = Reflect.ownKeys(...args);
         debugger;
-        console.error( 'ownKeys' , result );
+        // console.error( 'ownKeys' , result );
         return [...result, __IS_PREVENTED_UNDEFINED__ ];
       },
     };
 
     debugger;
-    return new Proxy( __putMarker( currTarget ), currHandler );
+    return new Proxy( currTarget, currHandler );
 
   } else {
     return currTarget;
   }
 }
 
-function __putMarker( currTarget ) {
-  Object.defineProperty( currTarget, __IS_PREVENTED_UNDEFINED__, {
-    value        : true,
-    enumerable   : true,
-    writable     : false,
-    configurable : true,
-  });
-  return currTarget;
-}
-function __removeMarker( currTarget ) {
-  if ( 
-    currTarget !== null &&
-    currTarget !== undefined &&
-    ( typeof currTarget === 'object' || 
-      typeof currTarget === 'function' ) )
-  {
-    try {
-      delete currTarget[ __IS_PREVENTED_UNDEFINED__ ];
-    } catch(e){
-      console.error('__IS_PREVENTED_UNDEFINED__ERROR',e,currTarget);
-      throw e;
-    }
-  }
-  return currTarget;
-}
 
 
 function isUndefinedPrevented(o){
+  debugger;
   if ( o && Object.hasOwn( o, __IS_PREVENTED_UNDEFINED__ ) ) {
     return true;
   } else {
@@ -531,7 +507,7 @@ function isUndefinedPrevented(o){
 
 function unprevent(o) {
   if ( isUndefinedPrevented(o) ) {
-    return  unprevent( __removeMarker( o[__UNPREVENT__] ) );
+    return unprevent( o[__UNPREVENT__] );
   } else {
     return o;
   }
@@ -557,8 +533,9 @@ function recursivelyUnprevent( o ) {
 }
 
 function preventUnusedProperties( o ) {
-  if ( ! o[__IS_PREVENTED_UNDEFINED__] )
+  if ( ! isUndefinedPrevented(o) )
     throw new TypeError('this object is not prevented undefined');
+
   const result = o[__CHECK_IF_ALL_PROPERTIES_ARE_REFERRED__];
   if ( result.length !== 0 ) {
     const dump = inspect( o[__UNPREVENT__] , {depth:null,breakLength:80});
