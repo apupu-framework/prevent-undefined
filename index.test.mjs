@@ -856,9 +856,9 @@ test( 'ignore functions in order to (mostly) unprevent `prototype` ', ()=>{
     expect( isUndefinedPrevented( PA ) ).toBe(true);
     expect( isUndefinedPrevented( PB ) ).toBe(false);
 
-    // This undefined value comes from A class. There is no way to intercept
+    // This value `true` comes from A class. There is no way to intercept
     // accessing fields to get own values of objects in JavaScript.
-    expect( PB[ __IS_PREVENTED_UNDEFINED__ ] ).toBe( undefined );
+    expect( PB[ __IS_PREVENTED_UNDEFINED__ ] ).toBe( true );
 
     expect( isUndefinedPrevented( PB ) ).toBe( false );
 
@@ -871,6 +871,17 @@ test( 'ignore functions in order to (mostly) unprevent `prototype` ', ()=>{
 
 
 
+
+test( 'test ... ', ()=>{
+  const arr = preventUndefined( [3,2,1,0] );
+
+  expect( ()=>{
+    const arr2= [ ...arr ];
+    console.error(arr2);
+
+  }).not.toThrow();
+
+});
 
 
 

@@ -379,7 +379,7 @@ function preventUndefined( ...args ) {
           return currTarget;
         }
         if ( prop === __IS_PREVENTED_UNDEFINED__ ) {
-          return undefined;
+          return true;
         }
         if ( prop === __CHECK_IF_ALL_PROPERTIES_ARE_REFERRED__ ) {
           return checkIfAllPropertiesAreReferred( target, currState.referredProps );
@@ -479,10 +479,14 @@ function preventUndefined( ...args ) {
       },
 
       ownKeys(...args) {
+        return Reflect.ownKeys(...args);
         const result = Reflect.ownKeys(...args);
         debugger;
         // console.error( 'ownKeys' , result );
-        return [...result, __IS_PREVENTED_UNDEFINED__ ];
+        if ( ! result.includes( __IS_PREVENTED_UNDEFINED__ ) ) {
+          result.push( __IS_PREVENTED_UNDEFINED__ );
+        }
+        return result.reduce( (accumlator,e)=>accumlator.includes(e) ? accumlator : [ ...accumlator, e] );
       },
     };
 

@@ -651,6 +651,25 @@ Deprecated `typesafe`.
   preventUndefined().
 - Added ***isUndefinedPrevented()***
 
+#### v0.2.32 ####
+-  A Workaround issue that using spread syntax causes following errors :
+
+1.
+```
+'ownKeys' on proxy: trap returned duplicate entries`
+```
+
+2.
+```
+This is caused by either a bug in Node.js or incorrect usage of Node.js internals.
+Please open an issue with this stack trace at https://github.com/nodejs/node/issues`
+```
+
+Intercepting `getOwnPropertyDescriptor()` and ownKeys() by using `Proxy`
+sometimes makes Node.js crash; I am not sure what exactly causes the problem
+but it surely causes it to crash.
+
+
 
  Conclusion
 --------------------------------------------------------------------------------
