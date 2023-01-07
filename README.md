@@ -178,9 +178,15 @@ someFunc({foo,bar,baz});
 > }
 ```
 
-`preventUnusedProperties()` was **added v0.2.20**.
+`preventUnusedProperties()` has been **added v0.2.20**.
 
 
+ isUndefinedPrevented()
+--------------------------------------------------------------------------------
+`isUndefinedPrevented()` function returns true if a specified object is
+protected by `preventUndefined()` function.
+
+`isUndefinedPrevented()` has been added on ***v0.2.31***
 
  Validators
 --------------------------------------------------------------------------------
@@ -639,9 +645,11 @@ Deprecated `typesafe`.
   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy/get
 
 #### v0.2.31 ####
-- If specified validator has `script` propety, show the content of the propery
-  on validation fail.
-
+- If a specified validator has `script` propety, show its content on validation
+  fail.
+- Fixed unexpected behavior when the parent class of a class is protected by
+  preventUndefined().
+- Added ***isUndefinedPrevented()***
 
 
  Conclusion
