@@ -14,7 +14,8 @@ function inspect(s) {
 
 export {
   preventUndefined ,
-  undefinedlessFunction ,
+  isUndefinedPrevented,
+  undefinedlessFunction,
   unprevent,
   recursivelyUnprevent,
   preventUnusedProperties,

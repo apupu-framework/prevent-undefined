@@ -638,6 +638,10 @@ Deprecated `typesafe`.
   See the reference :
   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy/get
 
+#### v0.2.31 ####
+- If specified validator has `script` propety, show the content of the propery
+  on validation fail.
+
 
 
  Conclusion

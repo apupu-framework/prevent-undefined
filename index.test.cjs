@@ -1,4 +1,4 @@
-const { preventUndefined, undefinedlessFunction, recursivelyUnprevent, preventUnusedProperties, typesafe, errorIfUndefined, } = require( './index.cjs' );
+const  { preventUndefined, isUndefinedPrevented, undefinedlessFunction, recursivelyUnprevent, preventUnusedProperties, typesafe, errorIfUndefined, } = require( './index.cjs' );
 
 test( '', ()=>{
   const __foo = {
@@ -176,7 +176,7 @@ test( 'check ignore list `@@iterator` (for `React.js`)' , ()=>{
 });
 
 
-test( 'errorIfUndefined' , ()=>{
+test( 'errorIfUndefined 1' , ()=>{
   expect(()=>{
     try{
       ((
@@ -196,7 +196,7 @@ test( 'errorIfUndefined' , ()=>{
 });
 
 
-test( 'errorIfUndefined' , ()=>{
+test( 'errorIfUndefined 2' , ()=>{
   const o = preventUndefined({
     a : preventUndefined({
       b: 'hello',
@@ -241,7 +241,7 @@ test( 'preventUnusedProperties for an array' , ()=>{
 test( 'sample' , ()=>{
   expect( ()=>{
     function someFunc(args){
-      // Prevent undefined on the `args` object before destructuring it.
+      // Apply preventUndefined() on the `args` before destructuring it.
       args = preventUndefined(args);
       const {foo,bar} = args;
 
@@ -256,7 +256,9 @@ test( 'sample' , ()=>{
     var bar = 'bar';
     var baz = 'baz';
     someFunc({foo,bar,baz});
-  }).toThrow(new ReferenceError('the field [baz] was not referred in\n{\n  "foo": "foo",\n  "bar": "bar",\n  "baz": "baz"\n}'));
+  }).toThrow(new ReferenceError(
+    'the field [baz] was not referred in\n{\n  "foo": "foo",\n  "bar": "bar",\n  "baz": "baz"\n}'
+  ));
 });
 
 
@@ -507,6 +509,8 @@ test( 'sample' , ()=>{
     }
   }
 }
+validator
+(o)=>typeof o.foo.bar.value === 'number'
     `.trim()));
 });
 
@@ -534,6 +538,8 @@ test( 'typesafe' , ()=>{
     }
   }
 }
+validator
+(o)=>typeof o.foo.bar.value === 'number'
     `.trim()));
 });
 
@@ -562,6 +568,8 @@ test( 'typesafe No.2 an Example' , ()=>{
   "name": false,
   "age": 23
 }
+validator
+o=>(typeof o.name === 'string') && (typeof o.age ==='number')
     `.trim()));
 });
 
@@ -684,18 +692,12 @@ test( 'automatic unprevent for functions', ()=>{
     foo : {
       bar : {
         func : function foo_bar_func() {
-          console.error( 
-            `this[Symbol.for('__IS_PREVENTED_UNDEFINED__')]`, 
-             this[Symbol.for('__IS_PREVENTED_UNDEFINED__')] ,
-            ' ^^^ should be undefined ^^^' ,
-          );
-          return !! this[Symbol.for('__IS_PREVENTED_UNDEFINED__')];
+          return isUndefinedPrevented( this );
         },
       },
     },
   });
 
-  debugger;
   console.error( o.foo.bar      );
   console.error( o.foo.bar.func );
 
@@ -759,4 +761,122 @@ test( 'ignore functions in order to (mostly) unprevent `prototype` ', ()=>{
   const  obj = preventUndefined( target );
   expect( !! obj.prototype[ Symbol.for('__IS_PREVENTED_UNDEFINED__') ] ).toBe( false );
 });
+
+
+
+{
+  const obj = {
+    foo: {
+      bar : {
+        baz :{
+          data:1 
+        },
+      },
+    },
+  };
+
+  test( 'maxRecursiveLevel ... base ', ()=>{
+    const po = preventUndefined( obj );
+    expect( isUndefinedPrevented( po.foo         )).toBe( true );
+    expect( isUndefinedPrevented( po.foo.bar     )).toBe( true );
+    expect( isUndefinedPrevented( po.foo.bar.baz )).toBe( true );
+  });
+
+  test( 'maxRecursiveLevel ...0 ', ()=>{
+    const po = preventUndefined( obj, {maxRecursiveLevel:0 }  );
+    expect( isUndefinedPrevented( po             )).toBe( false );
+    expect( isUndefinedPrevented( po.foo         )).toBe( false );
+    expect( isUndefinedPrevented( po.foo.bar     )).toBe( false );
+    expect( isUndefinedPrevented( po.foo.bar.baz )).toBe( false );
+  });
+
+  test( 'maxRecursiveLevel ...1 ', ()=>{
+    const po = preventUndefined( obj, {maxRecursiveLevel:1 }  );
+    expect( isUndefinedPrevented( po             )).toBe( true  );
+    expect( isUndefinedPrevented( po.foo         )).toBe( false );
+    expect( isUndefinedPrevented( po.foo.bar     )).toBe( false );
+    expect( isUndefinedPrevented( po.foo.bar.baz )).toBe( false );
+  });
+
+  test( 'maxRecursiveLevel ...2 ', ()=>{
+    const po = preventUndefined( obj, {maxRecursiveLevel:2 }  );
+    expect( isUndefinedPrevented( po             )).toBe( true  );
+    expect( isUndefinedPrevented( po.foo         )).toBe( true  );
+    expect( isUndefinedPrevented( po.foo.bar     )).toBe( false );
+    expect( isUndefinedPrevented( po.foo.bar.baz )).toBe( false );
+  });
+
+  test( 'maxRecursiveLevel ...3 ', ()=>{
+    const po = preventUndefined( obj, {maxRecursiveLevel:3 }  );
+    expect( isUndefinedPrevented( po             )).toBe( true  );
+    expect( isUndefinedPrevented( po.foo         )).toBe( true  );
+    expect( isUndefinedPrevented( po.foo.bar     )).toBe( true  );
+    expect( isUndefinedPrevented( po.foo.bar.baz )).toBe( false );
+  });
+}
+
+
+
+{
+  const __IS_PREVENTED_UNDEFINED__               = Symbol.for( '__IS_PREVENTED_UNDEFINED__' );
+
+  test('inherit proxy class test 1', ()=>{
+    class A {
+      constructor() {
+        this.a=1;
+      }
+      static getClassName() {
+        return this.name;
+      }
+    }
+
+    expect( A.getClassName() ).toBe( 'A' );
+
+    const PA = preventUndefined( A );
+
+    expect( PA.getClassName() ).toBe( 'A' );
+
+    class PB extends PA {
+      constructor(){
+        super();
+      }
+    }
+    debugger;
+
+    console.error( PA[__IS_PREVENTED_UNDEFINED__] );
+    console.error( Object.hasOwn( PA, __IS_PREVENTED_UNDEFINED__ ) );
+
+    debugger;
+    expect( Object.hasOwn( A,  __IS_PREVENTED_UNDEFINED__ ) ).toBe(false);
+    expect( Object.hasOwn( PA, __IS_PREVENTED_UNDEFINED__ ) ).toBe(true);
+    expect( Object.hasOwn( PB, __IS_PREVENTED_UNDEFINED__ ) ).toBe(false);
+
+    expect( PB[ __IS_PREVENTED_UNDEFINED__ ] ).toBe(false);
+
+    expect( isUndefinedPrevented( PB ) ).toBe( false );
+
+    expect( PB.getClassName() ).toBe( 'PB' );
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

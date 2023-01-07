@@ -9,6 +9,7 @@ function inspect(s) {
   // });
 }
 
+
 const __UNPREVENT__                            = Symbol.for( '__UNPREVENT__' );
 const __IS_PREVENTED_UNDEFINED__               = Symbol.for( '__IS_PREVENTED_UNDEFINED__' );
 const __CHECK_IF_ALL_PROPERTIES_ARE_REFERRED__ = Symbol.for( '__CHECK_IF_ALL_PROPERTIES_ARE_REFERRED__' );
@@ -128,6 +129,10 @@ function parseArgs( args ) {
     result.validator = null;
   }
 
+  if ( ! ( 'maxRecursiveLevel' in result ) ) {
+    result.maxRecursiveLevel = -1;
+  }
+
   if ( ! ( 'onError' in result ) ) {
     result.onError = ()=>{};
   }
@@ -170,18 +175,36 @@ function processCallback( nargs ) {
   /*await*/ callbackWrapper();
 };
 
+function validatorToString( validator ) {
+  if ( 'script' in validator ) {
+    return validator.script;
+  } else {
+    return Function.prototype.toString.call( validator );
+  }
+}
+
+
 function preventUndefined( ...args ) {
-  const { target:argTarget, state:argState, validator: argVali, onError : argOnError  } = parseArgs( args );
+  const {
+    target            : argTarget, 
+    state             : argState, 
+    validator         : argVali, 
+    maxRecursiveLevel : argMaxRecursiveLevel, 
+    onError           : argOnError  
+  } = parseArgs( args );
+
   const currTarget = argTarget;
   const currState = {
     // the default values >>>
-    isRootState   : true,
-    parentState   : null,
-    currTarget    : currTarget,
-    referredProps : {}, // the properties which have been referred so far.
-    propPath      : [],
-    validator     : argVali,
-    onError       : argOnError,
+    isRootState       : true,
+    recursiveLevel    : 0,
+    maxRecursiveLevel : argMaxRecursiveLevel,
+    parentState       : null,
+    currTarget        : currTarget,
+    referredProps     : {}, // the properties which have been referred so far.
+    propPath          : [],
+    validator         : argVali,
+    onError           : argOnError,
 
     excludes : (n)=>{
       const stack = new Error().stack.trim().split('\n');
@@ -205,6 +228,26 @@ function preventUndefined( ...args ) {
     // the overriding values <<<
   };
 
+  /*
+   * (Sat, 07 Jan 2023 12:13:52 +0900)
+   *
+   * Check the current recursive level number and return the specified target
+   * without being processed by Proxy if the current recursive level exceeds
+   * the specified maximum number.
+   *
+   * If no maximum level is specified, preventUndefined() will be applied
+   * recursively without any limit.
+   *
+   * Especially preventUndefined() always leave the specified target
+   * unprocessed and return if `maxRecursiveLevel` is zero.
+   * */
+  if (
+    ( 0 <= currState.maxRecursiveLevel ) && 
+    ( currState.maxRecursiveLevel <= currState.recursiveLevel ) ) 
+  {
+    return currTarget;
+  }
+
   if ( currState.isRootState ) {
     currState.stackOnCreated = new Error().stack;
   }
@@ -221,10 +264,11 @@ function preventUndefined( ...args ) {
         result = validator( currTarget );
       } catch (e){
         const dump = inspect( currTarget )
-        const err = new ReferenceError( 'the given validator threw an error on\n' + dump + '\n' + validator, { cause : e });
+        const err = new ReferenceError( 'the given validator threw an error on\n' + dump + '\n' + validatorToString( validator ), { cause : e });
         console.error( err );
         throw err;
       }
+
       if ( ! result ) {
         const propPath = [ ...currState.propPath ] ;
         if ( prop !== null ) {
@@ -238,6 +282,7 @@ function preventUndefined( ...args ) {
           .replaceAll( /\$path/g, propPathStr )
           .replaceAll( /\$target/g, dumpOfTarget ) 
           .replaceAll( /\$created/g, dumpOfCreated )
+          .replaceAll( /\$source/g, validatorToString( validator ) )
         ;
         const err = new ReferenceError( errMsg );
         console.error( err );
@@ -264,7 +309,7 @@ function preventUndefined( ...args ) {
 
 
   // Perform the entry time validation.
-  executeValidation( null, '[prevent-undefined] failed object validation on\n$target\noccured on' );
+  executeValidation( null, '[prevent-undefined] failed object validation on\n$target\n$source\noccured on' );
 
   if (
     ( 
@@ -347,11 +392,13 @@ function preventUndefined( ...args ) {
         const nextTarget = Reflect.get(...args);
         const nextState = {
           ...currState,
-          isRootState   : false,
-          parentState   : currState,
-          currTarget    : nextTarget,
-          referredProps : {},
-          propPath      : propPath,
+          isRootState       : false,
+          recursiveLevel    : currState.recursiveLevel + 1,
+          maxRecursiveLevel : currState.maxRecursiveLevel,
+          parentState       : currState,
+          currTarget        : nextTarget,
+          referredProps     : {},
+          propPath          : propPath,
         };
 
         if ( ( typeof nextTarget === 'undefined') && ! currState.excludes( prop ) ) {
@@ -392,7 +439,7 @@ function preventUndefined( ...args ) {
 
           throw err;
         } else {
-          return preventUndefined( nextTarget, { state : nextState } );
+          return   preventUndefined( nextTarget, { state : nextState } );
         }
       },
 
@@ -400,33 +447,91 @@ function preventUndefined( ...args ) {
       set(...args) {
         const result = Reflect.set(...args);
         const [ target, property, value, receiver ] = args;
-        executeValidation( property, PREFIX_PREVENT_UNDEFINED +' '+ 'detected setting an invalid property value to $path on\n$target\n[stacktrace]\ncreated on\n$created\noccured on' );
+        executeValidation( property, PREFIX_PREVENT_UNDEFINED +' '+ 'detected setting an invalid property value to $path on\n$target\nvalidator\n$source\n[stacktrace]\ncreated on\n$created\noccured on' );
         return result;
       },
       defineProperty(...args) {
         const result = Reflect.defineProperty( ...args );
         const [ target, property, descriptor ] = args;
-        executeValidation( property, PREFIX_PREVENT_UNDEFINED +' '+ 'detected defining an invalid property value to $path on\n$target\n[stacktrace]\ncreated on\n$created\noccured on' );
+        executeValidation( property, PREFIX_PREVENT_UNDEFINED +' '+ 'detected defining an invalid property value to $path on\n$target\nvalidator\n$source\n[stacktrace]\ncreated on\n$created\noccured on' );
         return result;
       },
       deleteProperty(...args) {
         const result = Reflect.deleteProperty( ...args );
         const [ target, property ] = args;
-        executeValidation( property, PREFIX_PREVENT_UNDEFINED +' '+ 'detected deleting an invalid property value to $path on\n$target\n[stacktrace]\ncreated on\n$created\noccured on' );
+        executeValidation( property, PREFIX_PREVENT_UNDEFINED +' '+ 'detected deleting an invalid property value to $path on\n$target\nvalidator\n$source\n[stacktrace]\ncreated on\n$created\noccured on' );
         return result;
+      },
+
+      getOwnPropertyDescriptor( ...args ) {
+        const { target, prop } = args; 
+        if ( prop === __IS_PREVENTED_UNDEFINED__ ) {
+          return {
+            value : true,
+            enumerable   : false,
+            writable     : false,
+            configurable : true,
+          };
+        } else {
+          const result = Reflect.getOwnPropertyDescriptor( ...args );
+          return result;
+        }
+      },
+
+      ownKeys(...args) {
+        const result = Reflect.ownKeys(...args);
+        debugger;
+        console.error( 'ownKeys' , result );
+        return [...result, __IS_PREVENTED_UNDEFINED__ ];
       },
     };
 
-    return new Proxy( currTarget, currHandler );
+    debugger;
+    return new Proxy( __putMarker( currTarget ), currHandler );
 
   } else {
     return currTarget;
   }
 }
 
+function __putMarker( currTarget ) {
+  Object.defineProperty( currTarget, __IS_PREVENTED_UNDEFINED__, {
+    value        : true,
+    enumerable   : true,
+    writable     : false,
+    configurable : true,
+  });
+  return currTarget;
+}
+function __removeMarker( currTarget ) {
+  if ( 
+    currTarget !== null &&
+    currTarget !== undefined &&
+    ( typeof currTarget === 'object' || 
+      typeof currTarget === 'function' ) )
+  {
+    try {
+      delete currTarget[ __IS_PREVENTED_UNDEFINED__ ];
+    } catch(e){
+      console.error('__IS_PREVENTED_UNDEFINED__ERROR',e,currTarget);
+      throw e;
+    }
+  }
+  return currTarget;
+}
+
+
+function isUndefinedPrevented(o){
+  if ( o && Object.hasOwn( o, __IS_PREVENTED_UNDEFINED__ ) ) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 function unprevent(o) {
-  if ( o && o[__IS_PREVENTED_UNDEFINED__] ) {
-    return unprevent( o[__UNPREVENT__] );
+  if ( isUndefinedPrevented(o) ) {
+    return  unprevent( __removeMarker( o[__UNPREVENT__] ) );
   } else {
     return o;
   }
@@ -479,6 +584,7 @@ const errorIfUndefined = name=>{throw new ReferenceError(`the parameter value of
 
 
 module.exports.preventUndefined        = preventUndefined;
+module.exports.isUndefinedPrevented    = isUndefinedPrevented;
 module.exports.undefinedlessFunction   = undefinedlessFunction;
 module.exports.unprevent               = unprevent;
 module.exports.recursivelyUnprevent    = recursivelyUnprevent;
