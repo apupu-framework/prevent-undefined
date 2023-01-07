@@ -188,6 +188,70 @@ protected by `preventUndefined()` function.
 
 `isUndefinedPrevented()` has been added on ***v0.2.31***
 
+
+
+ maxRecursiveLevel
+--------------------------------------------------------------------------------
+
+`preventUndefined()` protects the specified object and all of its properties as
+well. As default, it protects all of descendants recursively. You can limit its
+maximum recursive level.
+
+```javascript
+const obj = {
+  foo: {
+    bar : {
+      baz :{
+        data:1 
+      },
+    },
+  },
+};
+
+test( 'maxRecursiveLevel ... base ', ()=>{
+  const po = preventUndefined( obj );
+  expect( isUndefinedPrevented( po.foo         )).toBe( true );
+  expect( isUndefinedPrevented( po.foo.bar     )).toBe( true );
+  expect( isUndefinedPrevented( po.foo.bar.baz )).toBe( true );
+});
+
+test( 'maxRecursiveLevel ...0 ', ()=>{
+  const po = preventUndefined( obj, {maxRecursiveLevel:0 }  );
+  expect( isUndefinedPrevented( po             )).toBe( false );
+  expect( isUndefinedPrevented( po.foo         )).toBe( false );
+  expect( isUndefinedPrevented( po.foo.bar     )).toBe( false );
+  expect( isUndefinedPrevented( po.foo.bar.baz )).toBe( false );
+});
+
+test( 'maxRecursiveLevel ...1 ', ()=>{
+  const po = preventUndefined( obj, {maxRecursiveLevel:1 }  );
+  expect( isUndefinedPrevented( po             )).toBe( true  );
+  expect( isUndefinedPrevented( po.foo         )).toBe( false );
+  expect( isUndefinedPrevented( po.foo.bar     )).toBe( false );
+  expect( isUndefinedPrevented( po.foo.bar.baz )).toBe( false );
+});
+
+test( 'maxRecursiveLevel ...2 ', ()=>{
+  const po = preventUndefined( obj, {maxRecursiveLevel:2 }  );
+  expect( isUndefinedPrevented( po             )).toBe( true  );
+  expect( isUndefinedPrevented( po.foo         )).toBe( true  );
+  expect( isUndefinedPrevented( po.foo.bar     )).toBe( false );
+  expect( isUndefinedPrevented( po.foo.bar.baz )).toBe( false );
+});
+
+test( 'maxRecursiveLevel ...3 ', ()=>{
+  const po = preventUndefined( obj, {maxRecursiveLevel:3 }  );
+  expect( isUndefinedPrevented( po             )).toBe( true  );
+  expect( isUndefinedPrevented( po.foo         )).toBe( true  );
+  expect( isUndefinedPrevented( po.foo.bar     )).toBe( true  );
+  expect( isUndefinedPrevented( po.foo.bar.baz )).toBe( false );
+});
+```
+
+***ADDED v0.2.33 (Sat, 07 Jan 2023 17:51:53 +0900)***
+
+
+
  Validators
 --------------------------------------------------------------------------------
 If you set a validator to the second parameter of `preventUndefined()`, it monitors
@@ -362,6 +426,9 @@ strictFunc({ foo_WITH_TYPO: 'foo' });
 `errorIfUndefined` takes only one parameter : `name` which is to specify the name of the parameter.
 
 `errorIfUndefined()` has been added in **v0.2.19**.
+
+
+***DEPRECATED v0.2.33*** This feature will be removed in near future.
 
 
  The Basic Idea of `prevent-undefined`
@@ -669,6 +736,10 @@ Intercepting `getOwnPropertyDescriptor()` and ownKeys() by using `Proxy`
 sometimes makes Node.js crash; I am not sure what exactly causes the problem
 but it surely causes it to crash.
 
+
+#### v0.2.33 ###
+(Sat, 07 Jan 2023 17:51:53 +0900)
+- Added `maxRecursiveLevel` feature
 
 
  Conclusion
