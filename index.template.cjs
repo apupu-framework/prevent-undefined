@@ -1,5 +1,6 @@
 params: body
 'use strict'
+const {vali_to_string} = require('vanilla-schema-validator');
 
 const util = require('util');
 function inspect(s) {

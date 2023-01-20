@@ -720,7 +720,6 @@ test( 'automatically unprevent for functions', ()=>{
     },
   });
 
-  debugger;
   console.error( o.foo.bar      );
   console.error( o.foo.bar.func );
 
@@ -843,12 +842,10 @@ test( 'ignore functions in order to (mostly) unprevent `prototype` ', ()=>{
         super();
       }
     }
-    debugger;
 
     console.error( isUndefinedPrevented( A ) );
     console.error( isUndefinedPrevented( PA ) );
 
-    debugger;
 
     expect( isUndefinedPrevented( A  ) ).toBe(false);
     expect( isUndefinedPrevented( PA ) ).toBe(true);

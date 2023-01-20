@@ -741,6 +741,11 @@ but it surely causes it to crash.
 (Sat, 07 Jan 2023 17:51:53 +0900)
 - Added `maxRecursiveLevel` feature
 
+#### v0.2.34 ###
+(Fri, 20 Jan 2023 19:40:35 +0900)
+- improved more informative error messages
+- removed unnecessary instances of `debugger` directive
+
 
  Conclusion
 --------------------------------------------------------------------------------

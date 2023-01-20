@@ -164,14 +164,6 @@ function processCallback( nargs ) {
   /*await*/ callbackWrapper();
 };
 
-function validatorToString( validator ) {
-  if ( 'script' in validator ) {
-    return validator.script;
-  } else {
-    return Function.prototype.toString.call( validator );
-  }
-}
-
 
 function preventUndefined( ...args ) {
   const {
@@ -253,7 +245,7 @@ function preventUndefined( ...args ) {
         result = validator( currTarget );
       } catch (e){
         const dump = inspect( currTarget )
-        const err = new ReferenceError( 'the given validator threw an error on\n' + dump + '\n' + validatorToString( validator ), { cause : e });
+        const err = new ReferenceError( 'the given validator threw an error on\n' + dump + '\n' + vali_to_string( validator ), { cause : e });
         console.error( err );
         throw err;
       }
@@ -271,7 +263,7 @@ function preventUndefined( ...args ) {
           .replaceAll( /\$path/g, propPathStr )
           .replaceAll( /\$target/g, dumpOfTarget ) 
           .replaceAll( /\$created/g, dumpOfCreated )
-          .replaceAll( /\$source/g, validatorToString( validator ) )
+          .replaceAll( /\$source/g, vali_to_string( validator ) )
         ;
         const err = new ReferenceError( errMsg );
         console.error( err );
@@ -298,7 +290,7 @@ function preventUndefined( ...args ) {
 
 
   // Perform the entry time validation.
-  executeValidation( null, '[prevent-undefined] failed object validation on\n$target\n$source\noccured on' );
+  executeValidation( null, '[prevent-undefined] failed object validation on\n$target\nvalidator\n$source\noccured on' );
 
   if (
     ( 
@@ -470,7 +462,6 @@ function preventUndefined( ...args ) {
       ownKeys(...args) {
         return Reflect.ownKeys(...args);
         const result = Reflect.ownKeys(...args);
-        debugger;
         // console.error( 'ownKeys' , result );
         if ( ! result.includes( __IS_PREVENTED_UNDEFINED__ ) ) {
           result.push( __IS_PREVENTED_UNDEFINED__ );
@@ -479,7 +470,6 @@ function preventUndefined( ...args ) {
       },
     };
 
-    debugger;
     return new Proxy( currTarget, currHandler );
 
   } else {
@@ -490,7 +480,6 @@ function preventUndefined( ...args ) {
 
 
 function isUndefinedPrevented(o){
-  debugger;
   if ( o && Object.hasOwn( o, __IS_PREVENTED_UNDEFINED__ ) ) {
     return true;
   } else {
