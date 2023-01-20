@@ -746,6 +746,10 @@ but it surely causes it to crash.
 - improved more informative error messages
 - removed unnecessary instances of `debugger` directive
 
+#### v0.2.35 ###
+(Fri, 20 Jan 2023 19:58:25 +0900)
+fixed the issue that the package could not be loaded; v0.2.34 was broken.
+
 
  Conclusion
 --------------------------------------------------------------------------------
