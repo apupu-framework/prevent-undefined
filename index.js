@@ -212,7 +212,7 @@ function preventUndefined( ...args ) {
   // test the validator; if it returns a function, it could be a
   // validator-factory which is not appropriate as a validator..
   if ( ( typeof currState.validator   === 'function' ) && 
-       ( typeof currState.validator({}) === 'function' ) 
+       ( typeof currState.validator.call( null,{} ) === 'function' ) 
   ) {
     throw new TypeError( 
       'Your validator returned a function. Check your code. ' +
@@ -253,7 +253,7 @@ function preventUndefined( ...args ) {
     if ( validator ) {
       let result = null;
       try {
-        result = validator( currTarget );
+        result = validator.call( null, currTarget );
       } catch (e){
         const dump = inspect( currTarget )
         const err = new ReferenceError( 'the given validator threw an error on\n' + dump + '\n' + vali_to_string( validator ), { cause : e });
@@ -314,7 +314,7 @@ function preventUndefined( ...args ) {
     const currHandler = {
       // unprevent `this` when it calls the function.
       apply : function apply( target, this_arg, args ) {
-        return target.apply( unprevent( this_arg ), args );
+        return target.apply( recursivelyUnprevent( this_arg ), args );
       },
 
       // reading properties

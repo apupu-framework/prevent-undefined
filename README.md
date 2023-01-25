@@ -761,11 +761,16 @@ but it surely causes it to crash.
 (Fri, 20 Jan 2023 19:58:25 +0900)
 fixed the issue that the package could not be loaded; v0.2.34 was broken.
 
-#### v0.2.36 ###
+#### v0.2.36 ####
 (Wed, 25 Jan 2023 14:42:54 +0900)
 - Check the specified validator if it returns a function. If so, throw an error
   to let the user know that it could be a validator factory, not a validator
   itself.
+
+#### v0.2.37 ####
+(Wed, 25 Jan 2023 16:31:47 +0900)
+- validators should be called with explicitly specified `thisArg` via `call()`
+  / `apply()`.
 
 
  Conclusion
