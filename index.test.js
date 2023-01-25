@@ -264,7 +264,7 @@ test( 'sample' , ()=>{
 test( 'validator No.1 setting a bad value' , ()=>{
   expect(()=>{
     const validator = (o)=>{
-      if ( o.hello === 'yes' ) {
+      if ( o?.hello === 'yes' ) {
         return true;
       } else {
         return false;
@@ -283,7 +283,7 @@ test( 'validator No.1 setting a bad value' , ()=>{
 test( 'validator No.2 setting a correct value' , ()=>{
   expect(()=>{
     const validator = (o)=>{
-      if ( o.hello === 'yes' ) {
+      if ( o?.hello === 'yes' ) {
         return true;
       } else {
         return false;
@@ -302,7 +302,7 @@ test( 'validator No.2 setting a correct value' , ()=>{
 test( 'validator No.3 the entry time validation' , ()=>{
   expect(()=>{
     const validator = (o)=>{
-      if ( o.hello === 'yes' ) {
+      if ( o?.hello === 'yes' ) {
         return true;
       } else {
         return false;
@@ -320,7 +320,7 @@ test( 'validator No.3 the entry time validation' , ()=>{
 test( 'validator No.4 the entry time validation' , ()=>{
   expect(()=>{
     const validator = (o)=>{
-      if ( o.hello === 'yes' ) {
+      if ( o?.hello === 'yes' ) {
         return true;
       } else {
         return false;
@@ -338,7 +338,7 @@ test( 'validator No.4 the entry time validation' , ()=>{
 test( 'validator No.5 check detecting modifying a nested property' , ()=>{
   expect(()=>{
     const validator = (o)=>{
-      if ( o.hello.foo.bar.value === 'yes' ) {
+      if ( o?.hello?.foo?.bar?.value === 'yes' ) {
         return true;
       } else {
         return false;
@@ -364,7 +364,7 @@ test( 'validator No.5 check detecting modifying a nested property' , ()=>{
 test( 'validator No.6 check detecting modifying a nested property to a valid value' , ()=>{
   expect(()=>{
     const validator = (o)=>{
-      if ( o.hello.foo.bar.value === 'yes' ) {
+      if ( o?.hello?.foo?.bar?.value === 'yes' ) {
         return true;
       } else {
         return false;
@@ -390,7 +390,7 @@ test( 'validator No.6 check detecting modifying a nested property to a valid val
 test( 'validator No.7 check detecting deleting a nested property' , ()=>{
   expect(()=>{
     const validator = (o)=>{
-      if ( o.hello.foo.bar.value === 'yes' ) {
+      if ( o?.hello?.foo?.bar?.value === 'yes' ) {
         return true;
       } else {
         return false;
@@ -418,7 +418,7 @@ test( 'validator No.7 check detecting deleting a nested property' , ()=>{
 test( 'validator No.8 check detecting deleting a nested property' , ()=>{
   expect(()=>{
     const validator = (o)=>{
-      if ( o.hello.foo.bar.value === 'yes' ) {
+      if ( o?.hello?.foo?.bar?.value === 'yes' ) {
         return true;
       } else {
         return false;
@@ -444,7 +444,7 @@ test( 'validator No.8 check detecting deleting a nested property' , ()=>{
 test( 'validator No.9 check detecting throwing inside the validator' , ()=>{
   expect(()=>{
     const validator = (o)=>{
-      if ( o.hello.foo.bar.value === 'yes' ) {
+      if ( o?.hello?.foo?.bar?.value === 'yes' ) {
         return true;
       } else {
         return false;
@@ -487,7 +487,7 @@ function protectByCroppingStacktrace(f){
 
 test( 'sample' , ()=>{
   expect( protectByCroppingStacktrace(()=>{
-    const validator = (o)=>typeof o.foo.bar.value === 'number';
+    const validator = (o)=>typeof o?.foo?.bar?.value === 'number';
     const obj = preventUndefined({
       foo : {
         bar : {
@@ -508,7 +508,7 @@ test( 'sample' , ()=>{
   }
 }
 validator
-(o)=>typeof o.foo.bar.value === 'number'
+(o)=>typeof o?.foo?.bar?.value === 'number'
     `.trim()));
 });
 
@@ -516,7 +516,7 @@ validator
 
 test( 'typesafe' , ()=>{
   expect( protectByCroppingStacktrace(()=>{
-    const validator = (o)=>typeof o.foo.bar.value === 'number';
+    const validator = (o)=>typeof o?.foo?.bar?.value === 'number';
     const obj = typesafe(validator, {
       foo : {
         bar : {
@@ -537,7 +537,7 @@ test( 'typesafe' , ()=>{
   }
 }
 validator
-(o)=>typeof o.foo.bar.value === 'number'
+(o)=>typeof o?.foo?.bar?.value === 'number'
     `.trim()));
 });
 
@@ -545,7 +545,7 @@ validator
 
 test( 'typesafe No.2 an Example' , ()=>{
   expect( protectByCroppingStacktrace(()=>{
-    const t_user = o=>(typeof o.name === 'string') && (typeof o.age ==='number');
+    const t_user = o=>(typeof o?.name === 'string') && (typeof o?.age ==='number');
 
     function check_user({user}) {
       user = typesafe( t_user, user );
@@ -567,7 +567,7 @@ test( 'typesafe No.2 an Example' , ()=>{
   "age": 23
 }
 validator
-o=>(typeof o.name === 'string') && (typeof o.age ==='number')
+o=>(typeof o?.name === 'string') && (typeof o?.age ==='number')
     `.trim()));
 });
 
@@ -580,7 +580,7 @@ test( 'onError test No.1' , ()=>{
     let flag = null;
     let err = null;
 
-    const validator = o=>(typeof o.name === 'string') && (typeof o.age ==='number');
+    const validator = o=>(typeof o?.name === 'string') && (typeof o?.age ==='number');
     const onError = ()=>{
       flag = true;
     };
@@ -625,7 +625,7 @@ test( 'onError test No.2' , ()=>{
     let flag = null;
     let err = null;
 
-    const validator = o=>(typeof o.name === 'string') && (typeof o.age ==='number');
+    const validator = o=>(typeof o?.name === 'string') && (typeof o?.age ==='number');
     const onError = ()=>{
       flag = true;
     };
@@ -881,10 +881,27 @@ test( 'test ... ', ()=>{
 
 
 
+test( 'not to accept a validator factory as a validator', ()=>{
+  expect( ()=>{
+    try { 
+      preventUndefined( [3,2,1,0] , ()=>()=>true );
+    } catch ( e ) {
+      console.error(e);
+      throw e;
+    }
+  }).toThrow( new TypeError(
+      'Your validator returned a function. Check your code. ' +
+      'The bet is, you forgot to invoke your validator factory.') );
 
-
-
-
+  expect( ()=>{
+    try {
+      preventUndefined( [3,2,1,0] , ()=>true );
+    } catch ( e ) {
+      console.error(e);
+      throw e;
+    }
+  }).not.toThrow( );
+});
 
 
 

@@ -258,7 +258,7 @@ If you set a validator to the second parameter of `preventUndefined()`, it monit
 every modification on the object to keep consistency of the object.
 
 ```javascript
-const validator = (o)=>typeof o.foo.bar.value === 'number';
+const validator = (o)=>typeof o?.foo?.bar?.value === 'number';
 const obj = preventUndefined({
   foo : {
     bar : {
@@ -279,16 +279,27 @@ obj.foo.bar.value = 'BUMMER! NOT A NUMBER';
 > }
 ```
 
-`validator(o)` receives the target object as the first argument. Return true if
-the target object is valid; otherwise return false. `preventUndefined` regards
-any throwing error as failure of the validation.
+`validator` is a function which receives an argument and returns a boolean
+value.
 
-You can specify any funciton/closure as an evaluator. I recommend you to use a
-non-opinionated validator [RTTI.js][]; though it is not mandatory.
+The only argument is the value to be validated. Return `true` if the target
+object is valid; otherwise return false. 
 
-See [RTTI.js][]
+A `validator` function should not throw an error; if the validator throws an
+error, that causes the process that invokes the validation to throw the error.
 
-[RTTI.js]: https://www.npmjs.com/package/vanilla-schema-validator  
+( You might expect that throwing any error is treated as invalid state of the
+target object since if the validation process interrupts the main process, it
+could interrupt entire process; but this behavior is intentional because it is
+important to let the user know the validator encounters something that the user
+did not expect. )
+
+I recommend you to use a non-opinionated validator [Vanilla Schema Validator][];
+though it is not mandatory.
+
+See [Vanilla Schema Validator][]
+
+[Vanilla Schema Validator]: https://www.npmjs.com/package/vanilla-schema-validator  
 
 Validators have been added in **v0.2.23**.
 
@@ -749,6 +760,12 @@ but it surely causes it to crash.
 #### v0.2.35 ###
 (Fri, 20 Jan 2023 19:58:25 +0900)
 fixed the issue that the package could not be loaded; v0.2.34 was broken.
+
+#### v0.2.36 ###
+(Wed, 25 Jan 2023 14:42:54 +0900)
+- Check the specified validator if it returns a function. If so, throw an error
+  to let the user know that it could be a validator factory, not a validator
+  itself.
 
 
  Conclusion

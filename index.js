@@ -209,6 +209,17 @@ function preventUndefined( ...args ) {
     // the overriding values <<<
   };
 
+  // test the validator; if it returns a function, it could be a
+  // validator-factory which is not appropriate as a validator..
+  if ( ( typeof currState.validator   === 'function' ) && 
+       ( typeof currState.validator({}) === 'function' ) 
+  ) {
+    throw new TypeError( 
+      'Your validator returned a function. Check your code. ' +
+      'The bet is, you forgot to invoke your validator factory.');
+  }
+
+
   /*
    * (Sat, 07 Jan 2023 12:13:52 +0900)
    *
