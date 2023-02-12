@@ -244,7 +244,16 @@ function preventUndefined( ...args ) {
     currState.stackOnCreated = new Error().stack;
   }
 
-  const formatPropPath = (propPath)=> 'obj.' + propPath.map( e=>e!=null?e.toString():'(null)' ).join('.');
+  const formatPropPathElement = (e)=>{
+    if ( e == null ) {
+      return '[null]';
+    } else if ( ! Number.isNaN( Number.parseInt( e ,10 )) ) {
+      return '[' + e + ']';
+    } else {
+      return '.' + e.toString();
+    }
+  };
+  const formatPropPath = (propPath)=> 'obj' + propPath.map( e=>formatPropPathElement( e ) ).join('');
   
 
   const executeValidation = ( prop, msg )=>{
@@ -271,10 +280,10 @@ function preventUndefined( ...args ) {
         const dumpOfCreated = processStack( stackOnCreated )
 
         const errMsg = msg
-          .replaceAll( /\$path/g, propPathStr )
-          .replaceAll( /\$target/g, dumpOfTarget ) 
+          .replaceAll( /\$path/g,    propPathStr )
+          .replaceAll( /\$target/g,  dumpOfTarget ) 
           .replaceAll( /\$created/g, dumpOfCreated )
-          .replaceAll( /\$source/g, vali_to_string( validator ) )
+          .replaceAll( /\$source/g,  vali_to_string( validator ) )
         ;
         const err = new ReferenceError( errMsg );
         console.error( err );

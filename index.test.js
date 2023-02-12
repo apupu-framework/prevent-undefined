@@ -906,6 +906,14 @@ test( 'not to accept a validator factory as a validator', ()=>{
 
 
 
+test( 'test array ', ()=>{
+  const arr = preventUndefined( [0,1,2,[0,1,2]] );
+
+  expect( ()=>{
+    console.error( arr[3][4] );
+  }).toThrow();
+});
+
 
 
 
