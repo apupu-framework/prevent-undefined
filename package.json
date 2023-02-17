@@ -14,8 +14,10 @@
     }
   },
   "scripts": {
-    "test-esm": "node --test --test-reporter=spec index.test.mjs",
-    "test-cjs": "node --test --test-reporter=spec index.test.cjs",
+    "node:test-esm": "jest index.test.mjs",
+    "node:test-cjs": "jest index.test.cjs",
+    "test-esm": "NODE_OPTIONS='--experimental-vm-modules' node /usr/local/bin/jest --watch index.test.mjs",
+    "test-cjs": "                                         node /usr/local/bin/jest --watch index.test.cjs",
     "test": "npm run make; npm run test-esm # ; npm run test-cjs",
     "make": "node ./make.js"
   },
@@ -29,6 +31,22 @@
     "name": "Atsushi Oka",
     "url": "https://github.com/a-oka-z/prevent-undefined"
   },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "mjs",
+      "cjs",
+      "jsx",
+      "ts",
+      "tsx",
+      "json",
+      "node"
+    ],
+    "testMatch": [
+      "**/*.test.[cm]js"
+    ],
+    "verbose": true
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/a-oka-z/prevent-undefined"
@@ -41,3 +59,4 @@
     "vanilla-schema-validator": "^3.0.0"
   }
 }
+

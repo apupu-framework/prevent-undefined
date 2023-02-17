@@ -3,7 +3,7 @@ describe('test of test', ()=>{
   it('as 1',()=>{
     assert.throws( ()=>{
       throw new Error( 'foo' );
-    }, new Error('foo') );
+    }, Error,'foo' );
   });
 
   it('as 2', ()=>{
@@ -11,9 +11,9 @@ describe('test of test', ()=>{
   });
 
   it( 'as 3', ()=>{
-    assert.throws(()=>{ 
-      throw new ReferenceError('aaa\naaa');
-    }, new ReferenceError('aaa\naaa') );
+    assert.throws( ()=>{
+      throw new ReferenceError( 'aaa\naaa' );
+    }, ReferenceError, 'aaa\naaa' );
   });
 });
 
@@ -239,28 +239,28 @@ test( 'errorIfUndefined 2' , ()=>{
 // SKIPPED DUE TO PROBABLY NODE:TEST BUG
 // https://github.com/nodejs/node/issues/46508
 //
-describe( 'preventUnusedProperties', {skip:true}, ()=>{
+describe( 'preventUnusedProperties', ()=>{
   it( 'preventUnusedProperties' , ()=>{
     const o = preventUndefined({
       a:1,
       b:2,
     });
-    assert.throws( ()=>{ preventUnusedProperties(o) }, new ReferenceError( 'the fields [a,b] were not referred in\n{\n  "a": 1,\n  "b": 2\n}' ) );
-    // console.log( o.a );
-    assert.throws( ()=>{ preventUnusedProperties(o) }, new ReferenceError( 'the field [b] was not referred in\n{\n  "a": 1,\n  "b": 2\n}' ) );
-    // console.log( o.b );
+    assert.throws( ()=>{ preventUnusedProperties(o) }, ReferenceError, 'the fields [a,b] were not referred in\n{\n  "a": 1,\n  "b": 2\n}' );
+    console.log( o.a );
+    assert.throws( ()=>{ preventUnusedProperties(o) }, ReferenceError, 'the field [b] was not referred in\n{\n  "a": 1,\n  "b": 2\n}' );
+    console.log( o.b );
     assert.doesNotThrow(()=>{ preventUnusedProperties(o) } );
   });
 
 
   it( 'preventUnusedProperties for an array' , ()=>{
     const o = preventUndefined(["foo","bar","bum"]);
-    assert.throws(()=>{ preventUnusedProperties(o) }, new ReferenceError( 'the fields [0,1,2] were not referred in\n[\n  "foo",\n  "bar",\n  "bum"\n]' ) );
-    // console.log( o[0] );
-    assert.throws(()=>{ preventUnusedProperties(o) }, new ReferenceError( 'the fields [1,2] were not referred in\n[\n  "foo",\n  "bar",\n  "bum"\n]' ) );
-    // console.log( o[1] );
-    assert.throws(()=>{ preventUnusedProperties(o) }, new ReferenceError( 'the field [2] was not referred in\n[\n  "foo",\n  "bar",\n  "bum"\n]' ) );
-    // console.log( o[2] );
+    assert.throws(()=>{ preventUnusedProperties(o) }, ReferenceError, 'the fields [0,1,2] were not referred in\n[\n  "foo",\n  "bar",\n  "bum"\n]'  );
+    console.log( o[0] );
+    assert.throws(()=>{ preventUnusedProperties(o) }, ReferenceError, 'the fields [1,2] were not referred in\n[\n  "foo",\n  "bar",\n  "bum"\n]'  );
+    console.log( o[1] );
+    assert.throws(()=>{ preventUnusedProperties(o) }, ReferenceError, 'the field [2] was not referred in\n[\n  "foo",\n  "bar",\n  "bum"\n]'  );
+    console.log( o[2] );
     assert.doesNotThrow(()=>{ preventUnusedProperties(o) });
   });
 });
@@ -284,9 +284,7 @@ test( 'sample' , ()=>{
     var bar = 'bar';
     var baz = 'baz';
     someFunc({foo,bar,baz});
-  }, new ReferenceError(
-    'the field [baz] was not referred in\n{\n  "foo": "foo",\n  "bar": "bar",\n  "baz": "baz"\n}'
-  ));
+  }, ReferenceError,  'the field [baz] was not referred in\n{\n  "foo": "foo",\n  "bar": "bar",\n  "baz": "baz"\n}' );
 });
 
 
@@ -528,7 +526,7 @@ test( 'sample' , ()=>{
 
     obj.foo.bar.value = 'BUMMER! NOT A NUMBER';
 
-  }), new ReferenceError(`
+  }), ReferenceError, `
 [prevent-undefined] detected defining an invalid property value to obj.foo.bar.value on
 {
   "foo": {
@@ -539,7 +537,7 @@ test( 'sample' , ()=>{
 }
 validator
 (o)=>typeof o?.foo?.bar?.value === 'number'
-    `.trim()));
+    `.trim());
 });
 
 
@@ -557,7 +555,7 @@ test( 'typesafe' , ()=>{
 
     obj.foo.bar.value = 'BUMMER! NOT A NUMBER';
 
-  }), new ReferenceError(`
+  }), ReferenceError, (`
 [prevent-undefined] detected defining an invalid property value to obj.foo.bar.value on
 {
   "foo": {
@@ -590,7 +588,7 @@ test( 'typesafe No.2 an Example' , ()=>{
         age : 23
       }
     });
-  }), new ReferenceError(`
+  }), ReferenceError,(`
 [prevent-undefined] detected defining an invalid property value to obj.name on
 {
   "name": false,
@@ -912,7 +910,7 @@ test( 'not to accept a validator factory as a validator', ()=>{
     } catch ( e ) {
       throw e;
     }
-  }, new TypeError(
+  }, TypeError , (
       'Your validator returned a function. Check your code. ' +
       'The bet is, you forgot to invoke your validator factory.') );
 
