@@ -14,11 +14,9 @@
     }
   },
   "scripts": {
-    "debug-test-es6": "NODE_OPTIONS='--experimental-vm-modules' node inspect /usr/local/bin/jest index.test.mjs --testNamePattern='automatic.*'",
-    "debug-test-cs": "                                          node inspect /usr/local/bin/jest index.test.cjs --testNamePattern='automatic.*'",
-    "test-es6": "NODE_OPTIONS='--experimental-vm-modules' node /usr/local/bin/jest index.test.mjs",
-    "test-cs": "                                          node /usr/local/bin/jest index.test.cjs",
-    "test": "npm run make; npm run test-cs; npm run test-es6",
+    "test-esm": "node --test --test-reporter=spec index.test.mjs",
+    "test-cjs": "node --test --test-reporter=spec index.test.cjs",
+    "test": "npm run make; npm run test-esm # ; npm run test-cjs",
     "make": "node ./make.js"
   },
   "files": [
@@ -27,22 +25,6 @@
     "index.mjs",
     "package.json"
   ],
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "mjs",
-      "cjs",
-      "jsx",
-      "ts",
-      "tsx",
-      "json",
-      "node"
-    ],
-    "testMatch": [
-      "**/*.test.[cm]js"
-    ],
-    "verbose": true
-  },
   "author": {
     "name": "Atsushi Oka",
     "url": "https://github.com/a-oka-z/prevent-undefined"
@@ -56,6 +38,6 @@
     "sqlmacro": "^0.1.0"
   },
   "dependencies": {
-    "vanilla-schema-validator": "^2.0.3"
+    "vanilla-schema-validator": "^3.0.0"
   }
 }

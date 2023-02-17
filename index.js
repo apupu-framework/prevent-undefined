@@ -266,7 +266,7 @@ function preventUndefined( ...args ) {
       } catch (e){
         const dump = inspect( currTarget )
         const err = new ReferenceError( 'the given validator threw an error on\n' + dump + '\n' + vali_to_string( validator ), { cause : e });
-        console.error( err );
+        // console.error( err );
         throw err;
       }
 
@@ -280,13 +280,13 @@ function preventUndefined( ...args ) {
         const dumpOfCreated = processStack( stackOnCreated )
 
         const errMsg = msg
-          .replaceAll( /\$path/g,    propPathStr )
-          .replaceAll( /\$target/g,  dumpOfTarget ) 
-          .replaceAll( /\$created/g, dumpOfCreated )
-          .replaceAll( /\$source/g,  vali_to_string( validator ) )
+         // .replaceAll( /\$path/g,    propPathStr )
+         // .replaceAll( /\$target/g,  dumpOfTarget ) 
+         // .replaceAll( /\$created/g, dumpOfCreated )
+         // .replaceAll( /\$source/g,  vali_to_string( validator ) )
         ;
         const err = new ReferenceError( errMsg );
-        console.error( err );
+        // console.error( err );
 
         const stackOnOccured = err.stack;
 
@@ -423,7 +423,9 @@ function preventUndefined( ...args ) {
            *
            * We have to show the current stacktrace before jest hides it.
            */
-          console.error( err );
+
+          // GOOD BYE JEST (Fri, 17 Feb 2023 17:45:16 +0900)
+          // console.error( err );
 
           // 
           const stackOnOccured = err.stack;
