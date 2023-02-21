@@ -29,7 +29,7 @@
   ],
   "author": {
     "name": "Atsushi Oka",
-    "url": "https://github.com/a-oka-z/prevent-undefined"
+    "url": "https://github.com/ats4u"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -49,7 +49,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/a-oka-z/prevent-undefined"
+    "url": "https://github.com/apupu-framework/prevent-undefined"
   },
   "license": "ISC",
   "devDependencies": {

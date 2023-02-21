@@ -743,9 +743,18 @@ fixed the issue that the package could not be loaded; v0.2.34 was broken.
     on every throwing error object.
   - Output the trace of validators when a validation session was failed.
 
+#### v3.0.1 ####
+(Tue, 21 Feb 2023 17:27:43 +0900)
+- Updated the document.
 
  Conclusion
 --------------------------------------------------------------------------------
 That's all. Thank you very much.
+
+[Authoro : Atsushi Oka][github]
+[repository][]
+
+[repository] : https://github.com/apupu-framework/prevent-undefined
+[github] : https://github.com/apupu-framework
 
 
