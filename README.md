@@ -751,10 +751,10 @@ fixed the issue that the package could not be loaded; v0.2.34 was broken.
 --------------------------------------------------------------------------------
 That's all. Thank you very much.
 
-[Authoro : Atsushi Oka][github]
-[repository][]
+- [Author Atsushi Oka][github]
+- [Repository][repo]
 
-[repository] : https://github.com/apupu-framework/prevent-undefined
-[github] : https://github.com/apupu-framework
+[github]: https://github.com/apupu-framework
+[repo]: https://github.com/apupu-framework/prevent-undefined
 
 
