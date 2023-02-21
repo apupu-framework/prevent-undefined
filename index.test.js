@@ -935,5 +935,63 @@ test( 'test array ', ()=>{
 
 
 
+describe('new message', ()=>{
+  it( 'as 1', ()=>{
+    const __foo = {
+      hello : {
+        world : {
+          foo : {
+            bar : {
+              baz : "HELLO",
+            },
+          }
+        }
+      }
+    };
+
+    try {
+      preventUndefined( __foo ).hello.world.foo.bar.BAZ
+    } catch ( e ){
+      console.error( 'as 1', e );
+    }
+  });
+
+  it( 'as 2', ()=>{
+    const __foo = {
+      hello : {
+        world : {
+          foo : {
+            bar : {
+              baz : "HELLO",
+            },
+          }
+        }
+      }
+    };
+
+    schema.define`
+      foo1 : object(
+        hello : object(
+          world : object(
+            foo : object(
+              bar : object(
+                baz : string()))))),
+      foo2 : object(
+        hello : object(
+          world : object(
+            foo : object(
+              bar : object(
+                baz : number()))))),
+    `;
+
+    try {
+      preventUndefined( __foo, schema.foo2() );
+    } catch ( e ){
+      console.error( 'as 2', e );
+    }
+  });
+
+
+});
 
 

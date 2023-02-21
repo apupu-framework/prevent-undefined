@@ -85,10 +85,11 @@ function isOneOfWellKnownSymbols(n) {
   return 0<=WELL_KNOWN_SYMBOLS.indexOf(n);
 }
 
-const      IGNORING_KEYWORDS = [ 'toJSON', 'toPostgres', 'then', '$$typeof', '@@iterator' ];
+const      IGNORING_KEYWORDS = [ 'toJSON', 'toPostgres', 'then', '$$typeof', '@@iterator'  ];
 const JEST_IGNORING_KEYWORDS = [ 'toJSON', 'toPostgres', 'then', 'stack','message','cause' ];
 
-const PREFIX_PREVENT_UNDEFINED = '[prevent-undefined]';
+const COMMON_PREFIX_PREVENT_UNDEFINED = '[prevent-undefined]';
+const COMMON_ERROR_MESSAGE = 'on\n$target\nwith trace:\n$trace\nvalidator:\n$validator\noccured on';
 
 // console.error('isOneOfWellKnownSymbols( Symbol.iterator ) ',  isOneOfWellKnownSymbols( Symbol.iterator )  );
 
@@ -97,6 +98,17 @@ function checkIfAllPropertiesAreReferred( target, referredProps ) {
   const referredKeys = Object.keys( referredProps );
   const result       = targetKeys.filter( e=>! referredKeys.includes( e ) );
   return result;
+}
+
+class PreventUndefinedError extends Error {
+  constructor(...args) {
+    super(...args);
+  }
+}
+
+
+function changeIndent( s, indent ) {
+  return s.replaceAll(/^/gm, ' '.repeat(indent) );
 }
 
 function parseArgs( args ) {
@@ -128,9 +140,6 @@ function parseArgs( args ) {
   return result;
 }
 
-function processStack( stack ) {
-  return stack.split( '\n' ).slice(1).join('\n');
-}
 
 function processCallback( nargs ) {
   const {
@@ -139,8 +148,7 @@ function processCallback( nargs ) {
     propPathStr,
     currTarget,
     message, 
-    stackOnCreated,
-    stackOnOccured,
+    error,
   } = nargs;
 
   const onErrorInfo = {
@@ -148,8 +156,7 @@ function processCallback( nargs ) {
     propPathStr    : propPathStr,
     target         : currTarget,
     message        : message,
-    stackOnCreated : [ ...stackOnCreated ],
-    stackOnOccured : [ ...stackOnOccured ],
+    error          : error,
   };
 
   async function callbackWrapper() {
@@ -212,7 +219,7 @@ function preventUndefined( ...args ) {
   // test the validator; if it returns a function, it could be a
   // validator-factory which is not appropriate as a validator..
   if ( ( typeof currState.validator   === 'function' ) && 
-       ( typeof currState.validator.call( null,{} ) === 'function' ) 
+       ( typeof currState.validator.call( undefined, {} ) === 'function' ) 
   ) {
     throw new TypeError( 
       'Your validator returned a function. Check your code. ' +
@@ -241,7 +248,7 @@ function preventUndefined( ...args ) {
   }
 
   if ( currState.isRootState ) {
-    currState.stackOnCreated = new Error().stack;
+    currState.errorOnConfigured = new PreventUndefinedError( 'prevent-undefined was configured' );
   }
 
   const formatPropPathElement = (e)=>{
@@ -258,50 +265,62 @@ function preventUndefined( ...args ) {
 
   const executeValidation = ( prop, msg )=>{
     const rootState = searchRootState( currState );
-    const { validator, currTarget, stackOnCreated } = rootState;
-    if ( validator ) {
+    const { validator, currTarget, errorOnConfigured } = rootState;
+    if ( validator !== null && validator !== undefined ) {
+      const dumpOfValidator = changeIndent( validator.toString(), 2 );
       let result = null;
+
       try {
-        result = validator.call( null, currTarget );
+        // result = validator.call( null, currTarget );
+        result = trace_validator( validator, currTarget );
       } catch (e){
-        const dump = inspect( currTarget )
-        const err = new ReferenceError( 'the given validator threw an error on\n' + dump + '\n' + vali_to_string( validator ), { cause : e });
-        // console.error( err );
-        throw err;
+        const dumpOfTarget = inspect( currTarget )
+        const error = new ReferenceError( 
+          'the given validator threw an error' +
+          'on\n' + dumpOfTarget + '\n' +
+          'via validator\n' + ( dumpOfValidator ) + '\n' 
+          ,
+
+          { cause : e });
+        // console.error( error );
+        throw error;
       }
 
-      if ( ! result ) {
+      if ( ! result.value ) {
         const propPath = [ ...currState.propPath ] ;
         if ( prop !== null ) {
           propPath.push( prop );
         }
-        const propPathStr   = formatPropPath( propPath );
-        const dumpOfTarget  = inspect( currTarget )
-        const dumpOfCreated = processStack( stackOnCreated )
+        const propPathStr      = formatPropPath( propPath );
+        const dumpOfTarget     = changeIndent( inspect( currTarget ), 2 );
+        const traceOfValidator = changeIndent( result.report()      , 2 );  
 
         const errMsg = msg
-         // .replaceAll( /\$path/g,    propPathStr )
-         // .replaceAll( /\$target/g,  dumpOfTarget ) 
-         // .replaceAll( /\$created/g, dumpOfCreated )
-         // .replaceAll( /\$source/g,  vali_to_string( validator ) )
+          .replaceAll( /\$path/g,      propPathStr )
+          .replaceAll( /\$target/g,    dumpOfTarget ) 
+          .replaceAll( /\$validator/g, dumpOfValidator  )
+          .replaceAll( /\$trace/g,     traceOfValidator  )
         ;
-        const err = new ReferenceError( errMsg );
-        // console.error( err );
 
-        const stackOnOccured = err.stack;
+        const error = new ReferenceError( errMsg );
+        Object.defineProperty( error, 'errorOnConfigured', {
+          value : errorOnConfigured,
+          writable : true,
+          enumerable : true,
+          configurable : true,
+        });
+        // console.error( error );
 
         processCallback({
-          onError        : rootState.onError,
-          propPath       : propPath,
-          propPathStr    : propPathStr,
-          currTarget     : currTarget,
-          message        : errMsg,
-          stackOnCreated : stackOnCreated,
-          stackOnOccured : stackOnOccured,
-          error          : err,
+          onError           : rootState.onError,
+          propPath          : propPath,
+          propPathStr       : propPathStr,
+          currTarget        : currTarget,
+          message           : errMsg,
+          error             : error,
         });
 
-        throw err;
+        throw error;
       }
     } else {
       // no validator is set; ignored.
@@ -310,7 +329,7 @@ function preventUndefined( ...args ) {
 
 
   // Perform the entry time validation.
-  executeValidation( null, '[prevent-undefined] failed object validation on\n$target\nvalidator\n$source\noccured on' );
+  executeValidation( null, '[prevent-undefined] failed object validation ' + COMMON_ERROR_MESSAGE );
 
   if (
     ( 
@@ -404,15 +423,14 @@ function preventUndefined( ...args ) {
 
         if ( ( typeof nextTarget === 'undefined') && ! currState.excludes( prop ) ) {
           const rootState = searchRootState( currState );
-          const { currTarget, stackOnCreated } = rootState;
+          const { currTarget, errorOnConfigured } = rootState;
 
-          const propPathStr = formatPropPath( propPath );
+          const propPathStr  = formatPropPath( propPath );
           const dumpOfTarget = inspect( currTarget );
-          const dumpOfCreated = processStack( stackOnCreated );
-          const errMsg = PREFIX_PREVENT_UNDEFINED +' '+ propPathStr + ' is not defined in ' + dumpOfTarget + '\n[stacktrace]\ncreated on\n' + dumpOfCreated + '\n\noccured on';
-          const err = new ReferenceError( errMsg );
+          const errMsg = COMMON_PREFIX_PREVENT_UNDEFINED + ' ' + propPathStr + ' is not defined in ' + dumpOfTarget;
+          const error = new ReferenceError( errMsg );
 
-          // err.currTarget =  currTarget;
+          // error.currTarget =  currTarget;
 
           /**
            * (Fri, 21 Oct 2022 14:37:14 +0900)
@@ -425,24 +443,27 @@ function preventUndefined( ...args ) {
            */
 
           // GOOD BYE JEST (Fri, 17 Feb 2023 17:45:16 +0900)
-          // console.error( err );
+          // console.error( error );
 
-          // 
-          const stackOnOccured = err.stack;
-          processCallback({
-            onError        : rootState.onError,
-            propPath       : propPath,
-            propPathStr    : propPathStr,
-            currTarget     : currTarget,
-            message        : errMsg,
-            stackOnCreated : stackOnCreated,
-            stackOnOccured : stackOnOccured,
-            error          : err,
+          Object.defineProperty( error, 'errorOnConfigured', {
+            value : errorOnConfigured,
+            writable : true,
+            enumerable : true,
+            configurable : true,
           });
 
-          throw err;
+          processCallback({
+            onError           : rootState.onError,
+            propPath          : propPath,
+            propPathStr       : propPathStr,
+            currTarget        : currTarget,
+            message           : errMsg,
+            error             : error,
+          });
+
+          throw error;
         } else {
-          return   preventUndefined( nextTarget, { state : nextState } );
+          return preventUndefined( nextTarget, { state : nextState } );
         }
       },
 
@@ -450,19 +471,19 @@ function preventUndefined( ...args ) {
       set(...args) {
         const result = Reflect.set(...args);
         const [ target, property, value, receiver ] = args;
-        executeValidation( property, PREFIX_PREVENT_UNDEFINED +' '+ 'detected setting an invalid property value to $path on\n$target\nvalidator\n$source\n[stacktrace]\ncreated on\n$created\noccured on' );
+        executeValidation( property, COMMON_PREFIX_PREVENT_UNDEFINED +' '+ 'detected setting an invalid property value to $path ' + COMMON_ERROR_MESSAGE );
         return result;
       },
       defineProperty(...args) {
         const result = Reflect.defineProperty( ...args );
         const [ target, property, descriptor ] = args;
-        executeValidation( property, PREFIX_PREVENT_UNDEFINED +' '+ 'detected defining an invalid property value to $path on\n$target\nvalidator\n$source\n[stacktrace]\ncreated on\n$created\noccured on' );
+        executeValidation( property, COMMON_PREFIX_PREVENT_UNDEFINED +' '+ 'detected defining an invalid property value to $path ' + COMMON_ERROR_MESSAGE );
         return result;
       },
       deleteProperty(...args) {
         const result = Reflect.deleteProperty( ...args );
         const [ target, property ] = args;
-        executeValidation( property, PREFIX_PREVENT_UNDEFINED +' '+ 'detected deleting an invalid property value to $path on\n$target\nvalidator\n$source\n[stacktrace]\ncreated on\n$created\noccured on' );
+        executeValidation( property, COMMON_PREFIX_PREVENT_UNDEFINED +' '+ 'detected deleting an invalid property value to $path ' + COMMON_ERROR_MESSAGE );
         return result;
       },
 
@@ -542,11 +563,11 @@ function preventUnusedProperties( o ) {
 
   const result = o[__CHECK_IF_ALL_PROPERTIES_ARE_REFERRED__];
   if ( result.length !== 0 ) {
-    const dump = inspect( o[__UNPREVENT__] , {depth:null,breakLength:80});
+    const dumpOfTarget = inspect( o[__UNPREVENT__] , {depth:null,breakLength:80});
     if ( result.length === 1 ) {
-      throw new ReferenceError( 'the field [' + result[0] + '] was not referred in\n' + dump );
+      throw new ReferenceError( 'the field [' + result[0] + '] was not referred in\n' + dumpOfTarget );
     } else {
-      throw new ReferenceError( 'the fields [' + result.join(',') + '] were not referred in\n' + dump );
+      throw new ReferenceError( 'the fields [' + result.join(',') + '] were not referred in\n' + dumpOfTarget );
     }
   }
 }

@@ -1,7 +1,8 @@
  prevent-undefined
 =====================
 
-`prevent-undefined` throws an error to let you know that you accidentally refer an undefined propery on your object.
+`prevent-undefined` throws an error to let you know that you accidentally refer
+an undefined propery on your object.
 
 It also displays dump of the refered object for your convenience. See below :
 
@@ -116,7 +117,7 @@ proc(o); // you'll get "hello world" as expected.
 [optional chaining]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining
 
 
- recursivelyUnprevent() 
+ recursivelyUnprevent()
 --------------------------------------------------------------------------------
 `recursivelyUnprevent()` recursively unprevent the specified object, literally.
 Currently `recursivelyUnprevent()` is in the beta state; therefore, please use
@@ -138,7 +139,7 @@ function someFunc({foo,bar}){
 
 var foo = 'foo';
 var bar = 'bar';
-var baz = 'baz'; 
+var baz = 'baz';
 // `baz` a property which the caller thinks it is valid but actually isn't.
 someFunc({foo,bar,baz});
 
@@ -202,7 +203,7 @@ const obj = {
   foo: {
     bar : {
       baz :{
-        data:1 
+        data:1
       },
     },
   },
@@ -269,7 +270,7 @@ const obj = preventUndefined({
 
 obj.foo.bar.value = 'BUMMER! NOT A NUMBER';
 
-> ReferenceError: detected defining an invalid property value to obj.foo.bar.value on 
+> ReferenceError: detected defining an invalid property value to obj.foo.bar.value on
 > {
 >   "foo": {
 >     "bar": {
@@ -283,7 +284,7 @@ obj.foo.bar.value = 'BUMMER! NOT A NUMBER';
 value.
 
 The only argument is the value to be validated. Return `true` if the target
-object is valid; otherwise return false. 
+object is valid; otherwise return false.
 
 A `validator` function should not throw an error; if the validator throws an
 error, that causes the process that invokes the validation to throw the error.
@@ -299,47 +300,9 @@ though it is not mandatory.
 
 See [Vanilla Schema Validator][]
 
-[Vanilla Schema Validator]: https://www.npmjs.com/package/vanilla-schema-validator  
+[Vanilla Schema Validator]: https://www.npmjs.com/package/vanilla-schema-validator
 
 Validators have been added in **v0.2.23**.
-
-
- `prevent-undefined` as an Implementation of Runtime-Time Type Information 
---------------------------------------------------------------------------------
-
-> **DEPRECATED** `typesafe()` is deprecated on v0.2.29. Use `preventUndefined()`.
-
-`typesafe()` function is merely a forwarder to `preventUndefined()` function except
-it rearranges its arguments. While `preventUndefined()` receives the object to
-process at the first argument, `typesafe()` receives it at the last argument.
-
-This is intended only for readability when `preventUndefined()` is used as
-runtime type safety protection.
-
-
-```javascript
-  const t_user = o=>(typeof o.name === 'string') && (typeof o.age ==='number');
-
-  function check_user({user}) {
-    user = typesafe( t_user, user );
-    // Setting a wrong value causes throwing an error.
-    user.name = false; 
-    return user;
-  }
-
-  check_user({
-    user:{
-      name : 'John',
-      age : 23
-    }
-  });
-
-> detected defining an invalid property value to obj.name on
-> {
->   "name": false,
->   "age": 23
-> }
-```
 
 
   `onError`
@@ -356,7 +319,7 @@ Started from **v0.2.27**, you can specify an event handler when you call
     }
   });
 
-  console.error( "peekaboo! ",  obj.wrongProp ); 
+  console.error( "peekaboo! ",  obj.wrongProp );
 
 > "called wrongProp"
 >
@@ -376,7 +339,7 @@ properties on the first argument of the event handler.
 
 ```javascript
   const onError(info)=>{
-    console.error(info.propPath); // 
+    console.error(info.propPath); //
   };
   const someObj = {
     hello : {
@@ -421,7 +384,7 @@ illegal access on the target object is occured.
 
  errorIfUndefined()
 --------------------------------------------------------------------------------
-`errorIfUndefined()` is a perfect fancy mascot to implement 
+`errorIfUndefined()` is a perfect fancy mascot to implement
 ''prevent-undefined way'' of named parameters. When you call `errorIfUndefined()`,
 it simply throws ReferenceError(). Its only use case is as following :
 
@@ -431,7 +394,7 @@ function strictFunc({foo=errorIfUndefined('foo')}) {
 }
 strictFunc({ foo_WITH_TYPO: 'foo' });
 
-> ReferenceError: the parameter value of foo was undefined; any reference to an undefined value is strictly prohibited on this object.   
+> ReferenceError: the parameter value of foo was undefined; any reference to an undefined value is strictly prohibited on this object.
 ```
 
 `errorIfUndefined` takes only one parameter : `name` which is to specify the name of the parameter.
@@ -541,7 +504,7 @@ function getYourDataFromResource(id) {
 ```
 
 When you applied `prevent-undefined` in this way, you can easily indicate where
-the problematic `undefined` comes from. 
+the problematic `undefined` comes from.
 
 IMHO, you should always avoid referencing undefined properties for any form.
 
@@ -589,7 +552,7 @@ which is hard-coded in `prevent-undefined` module.
 
 
 
- History 
+ History
 --------------------------------------------------------------------------------
 
 #### v0.2.6 ####
@@ -620,10 +583,10 @@ Added keywords to ignore such as toJSON, `Symbol.toStringTag`,
 Added `$$typeof` to the ignore keyword list to let `prevent-undefined` work
 cooperatively  with `React.js`.
 
-This very informative article [Why Do React Elements Have a $$typeof Property?][$$typeof] 
+This very informative article [Why Do React Elements Have a $$typeof Property?][$$typeof]
 helped me to understand the problem. Thank you very much.
 
-[$$typeof]: https://overreacted.io/why-do-react-elements-have-typeof-property/ 
+[$$typeof]: https://overreacted.io/why-do-react-elements-have-typeof-property/
 
 #### v0.2.12 ####
 `v0.2.11` does not work as an ES6 module due to my carelessness.  The problem
@@ -639,7 +602,7 @@ modifying the actual code.  Believe me, this time I actually modified.
 
 #### v0.2.15 ####
 - Added standard well-known symbols to ignore list; they are to added since
-  they are likely to be checked as 
+  they are likely to be checked as
 ```
 const i = a[Symbol.iterator];
 if (i === undefined ) {
@@ -717,8 +680,8 @@ Deprecated `typesafe`.
   from `rtti.js` to `vanilla-schema-validator` due to deprecation of `rtti.js`.
 - Use Symbol.for() for all iternal properties of `prevent-undefined`.
   (Thu, 05 Jan 2023 11:45:45 +0900)
-- Now it protects function objects. 
-- Now it honors Proxy invariants. 
+- Now it protects function objects.
+- Now it honors Proxy invariants.
   See the reference :
   https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy/Proxy/get
 
@@ -771,6 +734,14 @@ fixed the issue that the package could not be loaded; v0.2.34 was broken.
 (Wed, 25 Jan 2023 16:31:47 +0900)
 - validators should be called with explicitly specified `thisArg` via `call()`
   / `apply()`.
+
+#### v3.0.0 ####
+(Tue, 21 Feb 2023 10:35:08 +0900)
+- Added a new error message system.
+  - Quit replacing stacktrace of throwing errors.
+  - Set an error object which is created when prevent-undefined is configured
+    on every throwing error object.
+  - Output the trace of validators when a validation session was failed.
 
 
  Conclusion
