@@ -6,7 +6,7 @@ const __CHECK_IF_ALL_PROPERTIES_ARE_REFERRED__ = Symbol.for( '__CHECK_IF_ALL_PRO
 function searchRootState( currState ) {
   if ( currState.isRootState ) {
     return currState;
-  } else { 
+  } else {
     return searchRootState( currState.parentState );
   }
 }
@@ -46,7 +46,7 @@ function isBuiltIn( t ) {
   );
 };
 
-/* 
+/*
  * toJSON
  * SEE https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toJSON
  *
@@ -147,7 +147,7 @@ function processCallback( nargs ) {
     propPath,
     propPathStr,
     currTarget,
-    message, 
+    message,
     error,
   } = nargs;
 
@@ -174,11 +174,11 @@ function processCallback( nargs ) {
 
 function preventUndefined( ...args ) {
   const {
-    target            : argTarget, 
-    state             : argState, 
-    validator         : argVali, 
-    maxRecursiveLevel : argMaxRecursiveLevel, 
-    onError           : argOnError  
+    target            : argTarget,
+    state             : argState,
+    validator         : argVali,
+    maxRecursiveLevel : argMaxRecursiveLevel,
+    onError           : argOnError
   } = parseArgs( args );
 
   const currTarget = argTarget;
@@ -196,11 +196,11 @@ function preventUndefined( ...args ) {
 
     excludes : (n)=>{
       const stack = new Error().stack.trim().split('\n');
-      // console.error('stack',stack); 
+      // console.error('stack',stack);
       // console.error('stack[3]',stack[3]); // this could be the location Jest calls the func.
-      const isProblematicModule = 
-        4<stack.length ? 
-          ( 0<=stack[3].search( /node_modules.jest/ ) ) || 
+      const isProblematicModule =
+        4<stack.length ?
+          ( 0<=stack[3].search( /node_modules.jest/ ) ) ||
           ( 0<=stack[3].search( /node_modules.pretty/ ) ) :
           false;
       if ( isProblematicModule ) {
@@ -218,10 +218,10 @@ function preventUndefined( ...args ) {
 
   // test the validator; if it returns a function, it could be a
   // validator-factory which is not appropriate as a validator..
-  if ( ( typeof currState.validator   === 'function' ) && 
-       ( typeof currState.validator.call( undefined, {} ) === 'function' ) 
+  if ( ( typeof currState.validator   === 'function' ) &&
+       ( typeof currState.validator.call( undefined, {} ) === 'function' )
   ) {
-    throw new TypeError( 
+    throw new TypeError(
       'Your validator returned a function. Check your code. ' +
       'The bet is, you forgot to invoke your validator factory.');
   }
@@ -241,8 +241,8 @@ function preventUndefined( ...args ) {
    * unprocessed and return if `maxRecursiveLevel` is zero.
    * */
   if (
-    ( 0 <= currState.maxRecursiveLevel ) && 
-    ( currState.maxRecursiveLevel <= currState.recursiveLevel ) ) 
+    ( 0 <= currState.maxRecursiveLevel ) &&
+    ( currState.maxRecursiveLevel <= currState.recursiveLevel ) )
   {
     return currTarget;
   }
@@ -254,14 +254,14 @@ function preventUndefined( ...args ) {
   const formatPropPathElement = (e)=>{
     if ( e == null ) {
       return '[null]';
-    } else if ( ! Number.isNaN( Number.parseInt( e ,10 )) ) {
+    } else if ( ! Number.isNaN( Number.parseInt( e.toString() ,10 )) ) {
       return '[' + e + ']';
     } else {
       return '.' + e.toString();
     }
   };
   const formatPropPath = (propPath)=> 'obj' + propPath.map( e=>formatPropPathElement( e ) ).join('');
-  
+
 
   const executeValidation = ( prop, msg )=>{
     const rootState = searchRootState( currState );
@@ -275,10 +275,10 @@ function preventUndefined( ...args ) {
         result = trace_validator( validator, currTarget );
       } catch (e){
         const dumpOfTarget = inspect( currTarget )
-        const error = new ReferenceError( 
+        const error = new ReferenceError(
           'the given validator threw an error' +
           'on\n' + dumpOfTarget + '\n' +
-          'via validator\n' + ( dumpOfValidator ) + '\n' 
+          'via validator\n' + ( dumpOfValidator ) + '\n'
           ,
 
           { cause : e });
@@ -293,11 +293,11 @@ function preventUndefined( ...args ) {
         }
         const propPathStr      = formatPropPath( propPath );
         const dumpOfTarget     = changeIndent( inspect( currTarget ), 2 );
-        const traceOfValidator = changeIndent( result.report()      , 2 );  
+        const traceOfValidator = changeIndent( result.report()      , 2 );
 
         const errMsg = msg
           .replaceAll( /\$path/g,      propPathStr )
-          .replaceAll( /\$target/g,    dumpOfTarget ) 
+          .replaceAll( /\$target/g,    dumpOfTarget )
           .replaceAll( /\$validator/g, dumpOfValidator  )
           .replaceAll( /\$trace/g,     traceOfValidator  )
         ;
@@ -332,12 +332,12 @@ function preventUndefined( ...args ) {
   executeValidation( null, '[prevent-undefined] failed object validation ' + COMMON_ERROR_MESSAGE );
 
   if (
-    ( 
+    (
       ( typeof currTarget === 'object') ||
       ( typeof currTarget === 'function' )
-    ) && 
-    ( currTarget !== null ) && 
-    ( ! isBuiltIn( currTarget ) ) 
+    ) &&
+    ( currTarget !== null ) &&
+    ( ! isBuiltIn( currTarget ) )
   ) {
     const currHandler = {
       // unprevent `this` when it calls the function.
@@ -371,17 +371,17 @@ function preventUndefined( ...args ) {
           }
         }
 
-        /* 
-         * ADDED ON (Thu, 05 Jan 2023 15:12:03 +0900) 
+        /*
+         * ADDED ON (Thu, 05 Jan 2023 15:12:03 +0900)
          * Ignore `prototype` when the target object is a function; preventing
          * undefined values on `prototype` is known to be problematic.  See the
-         * comment on the commit. 
+         * comment on the commit.
          */
 
         /*
          * not only does wrapping `prototype` causes problems but other
          * properties on functions, too; though, it is not clear which property
-         * causes the issue. Removed the `prop==='prototype'` part. 
+         * causes the issue. Removed the `prop==='prototype'` part.
          * (Thu, 05 Jan 2023 17:26:25 +0900)
          */
 
@@ -488,7 +488,7 @@ function preventUndefined( ...args ) {
       },
 
       getOwnPropertyDescriptor( ...args ) {
-        const [ target, prop ] = args; 
+        const [ target, prop ] = args;
         if ( prop === __IS_PREVENTED_UNDEFINED__ ) {
           return {
             value : true,
