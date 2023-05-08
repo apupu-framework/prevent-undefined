@@ -747,6 +747,12 @@ fixed the issue that the package could not be loaded; v0.2.34 was broken.
 (Tue, 21 Feb 2023 17:27:43 +0900)
 - Updated the document.
 
+#### v3.0.2 ####
+(Mon, 08 May 2023 13:50:28 +0900)
+(Though, actual modification was done on May 2 2023)
+- Convert symbol properties without throwing errors.
+
+
  Conclusion
 --------------------------------------------------------------------------------
 That's all. Thank you very much.
