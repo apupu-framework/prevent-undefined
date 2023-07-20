@@ -52,11 +52,15 @@
     "url": "https://github.com/apupu-framework/prevent-undefined"
   },
   "license": "ISC",
-  "devDependencies": {
+  "bak-devDependencies": {
     "sqlmacro": "^0.1.0"
   },
-  "dependencies": {
+  "bak-dependencies": {
     "vanilla-schema-validator": "^3.0.0"
+  },
+  "devDependencies": {
+  },
+  "dependencies": {
   }
 }
 
