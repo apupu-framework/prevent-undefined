@@ -53,6 +53,9 @@ function isBuiltIn( t ) {
     || ( ( typeof AsyncGenerator         === 'function' ) && ( t instanceof AsyncGenerator          ) )
     || ( ( typeof AsyncGeneratorFunction === 'function' ) && ( t instanceof AsyncGeneratorFunction  ) )
     || ( ( typeof Reflect                === 'function' ) && ( t instanceof Reflect                 ) )
+    // >>> ADDED (Mon, 31 Jul 2023 18:45:04 +0900) COUNTERMEASURE FOR NODE.JS
+    || ( ( typeof Buffer                 === 'function' ) && ( Buffer?.isBuffer?.(t)                ) )
+    // <<< ADDED (Mon, 31 Jul 2023 18:45:04 +0900) COUNTERMEASURE FOR NODE.JS
 //  || ( ( typeof Proxy                  === 'function' ) && ( t instanceof Proxy                   ) )
   );
 };

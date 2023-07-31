@@ -752,6 +752,9 @@ fixed the issue that the package could not be loaded; v0.2.34 was broken.
 (Though, actual modification was done on May 2 2023)
 - Convert symbol properties without throwing errors.
 
+#### v3.0.3 ####
+(Mon, 31 Jul 2023 19:15:26 +0900)
+- Added Node.js `Buffer` to the excluding class list.
 
  Conclusion
 --------------------------------------------------------------------------------
