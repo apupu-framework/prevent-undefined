@@ -755,6 +755,7 @@ fixed the issue that the package could not be loaded; v0.2.34 was broken.
 #### v3.0.3 ####
 (Mon, 31 Jul 2023 19:15:26 +0900)
 - Added Node.js `Buffer` to the excluding class list.
+- Applied `peerDependencies`.
 
  Conclusion
 --------------------------------------------------------------------------------

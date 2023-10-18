@@ -28,7 +28,7 @@
     "package.json"
   ],
   "author": {
-    "name": "Atsushi Oka",
+    "name": "Atsushi Oka (Kombucha.js)",
     "url": "https://github.com/ats4u"
   },
   "jest": {
@@ -52,10 +52,10 @@
     "url": "https://github.com/apupu-framework/prevent-undefined"
   },
   "license": "ISC",
-  "bak-devDependencies": {
+  "devDependencies": {
     "sqlmacro": "^0.1.0"
   },
-  "bak-dependencies": {
+  "peerDependencies": {
     "vanilla-schema-validator": "^3.0.0"
   },
   "devDependencies": {
@@ -63,4 +63,3 @@
   "dependencies": {
   }
 }
-
