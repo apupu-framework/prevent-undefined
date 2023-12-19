@@ -2,7 +2,7 @@ params: body
 'use strict'
 const { trace_validator } = require('vanilla-schema-validator');
 
-const util = require('util');
+// const util = require('util');
 function inspect(s) {
   return JSON.stringify( s, null, 2 );
   // return util.inspect( s, {
