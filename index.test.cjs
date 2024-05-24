@@ -1001,3 +1001,37 @@ describe('new message', ()=>{
 });
 
 
+describe('undefined or nonexistent ', ()=>{
+  it( 'as 1', ()=>{
+    const target = {
+      HELLO : 'hello',
+    };
+    const  obj = preventUndefined( target );
+    assert.doesNotThrow(()=>{
+      console.log( 'HELLOOOOOOOOOOOOOOOOOOOOOOOOOOO' , obj.HELLO );
+    });
+  });
+
+  it( 'as 2', ()=>{
+    const target = {
+      HELLO : 'hello',
+    };
+    const  obj = preventUndefined( target );
+    assert.throws(()=>{
+      console.log( 'HELLOOOOOOOOOOOOOOOOOOOOOOOOOOO' , obj.FOO );
+    });
+  });
+
+  it( 'as 3', ()=>{
+    const target = {
+      HELLO : 'hello',
+      WORLD : undefined,
+    };
+    const  obj = preventUndefined( target );
+    assert.doesNotThrow(()=>{
+      console.log( 'HELLOOOOOOOOOOOOOOOOOOOOOOOOOOO' , obj.WORLD );
+    });
+  })
+});
+
+

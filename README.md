@@ -757,6 +757,14 @@ fixed the issue that the package could not be loaded; v0.2.34 was broken.
 - Added Node.js `Buffer` to the excluding class list.
 - Applied `peerDependencies`.
 
+#### v3.0.4 ####
+(Fri, 24 May 2024 20:17:33 +0900)
+- Distinguish `! ( 'propertyName' in obj )` and 
+ `typeof obj.propertyName === 'undefined'`; only throw
+  an error when the specified property does not exist.
+  (not released)
+
+
  Conclusion
 --------------------------------------------------------------------------------
 That's all. Thank you very much.

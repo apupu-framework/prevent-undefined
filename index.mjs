@@ -433,7 +433,9 @@ function preventUndefined( ...args ) {
         currState.referredProps[prop] = true;
 
         const propPath = [ ...currState.propPath, prop ];
-        const nextTarget = Reflect.get(...args);
+        const hasNextTarget = Reflect.has(...args); // ADDED (Fri, 24 May 2024 20:08:56 +0900)
+        const nextTarget    = Reflect.get(...args);
+
         const nextState = {
           ...currState,
           isRootState       : false,
@@ -445,7 +447,8 @@ function preventUndefined( ...args ) {
           propPath          : propPath,
         };
 
-        if ( ( typeof nextTarget === 'undefined') && ! currState.excludes( prop ) ) {
+        // if ( ( typeof nextTarget === 'undefined') && ! currState.excludes( prop ) )
+        if ( (! hasNextTarget) && (! currState.excludes( prop )) ) {
           const rootState = searchRootState( currState );
           const { currTarget, errorOnConfigured } = rootState;
 
