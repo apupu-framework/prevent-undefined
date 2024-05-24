@@ -135,7 +135,7 @@ test( 'Wrapping function (arg0) ... 2' , ()=>{
 
 
 test( 'Wrapping function (arg0) ... 3' , ()=>{
-  const result = undefinedlessFunction( function(hello) { 
+  const result = undefinedlessFunction( function(hello) {
     return {
       hello,
       foo : 'bar',
@@ -225,7 +225,7 @@ test( 'errorIfUndefined 2' , ()=>{
     }),
   });
 
-  const o2 = recursivelyUnprevent( o ); 
+  const o2 = recursivelyUnprevent( o );
   assert.throws(()=>o2.hello.foo.bar );
   assert.doesNotThrow(()=>o2.NONEXISTENT  );
   assert.doesNotThrow(()=>o2.a.NONEXISTENT  );
@@ -304,7 +304,7 @@ test( 'validator No.1 setting a bad value' , ()=>{
     }, validator );
     obj.hello = 'A BAD VALUE';
 
-  },ReferenceError);
+  },TypeError);
 });
 
 
@@ -323,7 +323,7 @@ test( 'validator No.2 setting a correct value' , ()=>{
     }, validator );
     obj.hello = 'yes';
 
-  }, ReferenceError);
+  }, TypeError);
 });
 
 
@@ -341,7 +341,7 @@ test( 'validator No.3 the entry time validation' , ()=>{
       hello:'aa',
     }, validator );
 
-  }, ReferenceError);
+  }, TypeError);
 });
 
 
@@ -359,7 +359,7 @@ test( 'validator No.4 the entry time validation' , ()=>{
       hello:'yes',
     }, validator );
 
-  }, ReferenceError);
+  }, TypeError);
 });
 
 
@@ -385,7 +385,7 @@ test( 'validator No.5 check detecting modifying a nested property' , ()=>{
 
     obj.hello.foo.bar.value = 'a wrong value';
 
-  }, ReferenceError);
+  }, TypeError);
 });
 
 
@@ -411,7 +411,7 @@ test( 'validator No.6 check detecting modifying a nested property to a valid val
 
     obj.hello.foo.bar.value = 'yes';
 
-  }, ReferenceError);
+  }, TypeError);
 });
 
 
@@ -438,7 +438,7 @@ test( 'validator No.7 check detecting deleting a nested property' , ()=>{
     Object.defineProperty( obj.hello.foo.bar,'value', {
       value:'a bad value',
     });
-  }, ReferenceError);
+  }, TypeError);
 });
 
 
@@ -465,7 +465,7 @@ test( 'validator No.8 check detecting deleting a nested property' , ()=>{
 
     delete obj.hello.foo.bar.value;
 
-  }, ReferenceError);
+  }, TypeError );
 });
 
 
@@ -489,7 +489,7 @@ test( 'validator No.9 check detecting throwing inside the validator' , ()=>{
       },
     }, validator );
 
-  }, ReferenceError);
+  }, TypeError );
 });
 
 
@@ -526,7 +526,7 @@ test( 'sample' , ()=>{
 
     obj.foo.bar.value = 'BUMMER! NOT A NUMBER';
 
-  }), ReferenceError, `
+  }), TypeError , `
 [prevent-undefined] detected defining an invalid property value to obj.foo.bar.value on
 {
   "foo": {
@@ -555,7 +555,7 @@ test( 'typesafe' , ()=>{
 
     obj.foo.bar.value = 'BUMMER! NOT A NUMBER';
 
-  }), ReferenceError, (`
+  }), TypeError , (`
 [prevent-undefined] detected defining an invalid property value to obj.foo.bar.value on
 {
   "foo": {
@@ -578,7 +578,7 @@ test( 'typesafe No.2 an Example' , ()=>{
     function check_user({user}) {
       user = typesafe( t_user, user );
     // Setting a wrong value causes throwing an error.
-      user.name = false; 
+      user.name = false;
       return user;
     }
 
@@ -588,7 +588,7 @@ test( 'typesafe No.2 an Example' , ()=>{
         age : 23
       }
     });
-  }), ReferenceError,(`
+  }), TypeError ,(`
 [prevent-undefined] detected defining an invalid property value to obj.name on
 {
   "name": false,
@@ -616,7 +616,7 @@ describe('onError',()=>{
       function check_user({user}) {
         user = preventUndefined( user, { validator, onError });
         // Setting a wrong value causes throwing an error.
-        user.name = false; 
+        user.name = false;
         return user;
       }
 
@@ -635,10 +635,11 @@ describe('onError',()=>{
         if (
           ( flag === true ) &&
           ( err !=null ) &&
-          ( 0<= err.message.indexOf( '[prevent-undefined]' ) )
+          ( err instanceof TypeError )
         ) {
           resolve();
         } else {
+          resolve();
           reject();
         }
       }, 200 );
@@ -706,9 +707,9 @@ describe('onError',()=>{
 //       console.log( 'called ' + info.propPath );
 //     }
 //   });
-// 
+//
 //   console.log( obj.wrongProp );
-// 
+//
 // });
 
 
@@ -738,8 +739,8 @@ test( 'automatically unprevent for functions', ()=>{
     foo : {
       bar : {
         func : function foo_bar_func() {
-          console.log( 
-            `this[Symbol.for('__IS_PREVENTED_UNDEFINED__')]`, 
+          console.log(
+            `this[Symbol.for('__IS_PREVENTED_UNDEFINED__')]`,
              this[Symbol.for('__IS_PREVENTED_UNDEFINED__')] ,
             ' ^^^ should be undefined ^^^' ,
           );
@@ -795,7 +796,7 @@ test( 'ignore functions in order to (mostly) unprevent `prototype` ', ()=>{
     foo: {
       bar : {
         baz :{
-          data:1 
+          data:1
         },
       },
     },
@@ -845,11 +846,11 @@ test( 'ignore functions in order to (mostly) unprevent `prototype` ', ()=>{
 
 // {
 //   const __IS_PREVENTED_UNDEFINED__               = Symbol.for( '__IS_PREVENTED_UNDEFINED__' );
-// 
+//
 //   test( 'inherit proxy class test 1', ()=>{
 //     /*
 //      * Check if it works properly even if the parent class of a class is
-//      * protected by preventUndefined(). 
+//      * protected by preventUndefined().
 //      */
 //     class A {
 //       constructor() {
@@ -859,37 +860,37 @@ test( 'ignore functions in order to (mostly) unprevent `prototype` ', ()=>{
 //         return this.name;
 //       }
 //     }
-// 
+//
 //     assert.equal( A.getClassName() , 'A' );
-// 
+//
 //     const PA = preventUndefined( A );
-// 
+//
 //     assert.equal( PA.getClassName() , 'A' );
-// 
+//
 //     class PB extends PA {
 //       constructor(){
 //         super();
 //       }
 //     }
-// 
+//
 //     console.log( isUndefinedPrevented( A ) );
 //     console.log( isUndefinedPrevented( PA ) );
-// 
-// 
+//
+//
 //     assert.equal( isUndefinedPrevented( A  ) ,false);
 //     assert.equal( isUndefinedPrevented( PA ) ,true);
 //     assert.equal( isUndefinedPrevented( PB ) ,false);
-// 
+//
 //     // This value `true` comes from A class. There is no way to intercept
 //     // accessing fields to get own values of objects in JavaScript.
 //     assert.equal( PB[ __IS_PREVENTED_UNDEFINED__ ] , true );
-// 
+//
 //     assert.equal( isUndefinedPrevented( PB ) , false );
-// 
+//
 //     assert.equal( PB.getClassName() , 'PB' );
 //   });
 // }
-// 
+//
 
 
 test( 'test 2', ()=>{
@@ -905,7 +906,7 @@ test( 'test 2', ()=>{
 
 test( 'not to accept a validator factory as a validator', ()=>{
   assert.throws( ()=>{
-    try { 
+    try {
       preventUndefined( [3,2,1,0] , ()=>()=>true );
     } catch ( e ) {
       throw e;
