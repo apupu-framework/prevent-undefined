@@ -765,8 +765,9 @@ fixed the issue that the package could not be loaded; v0.2.34 was broken.
   (not released)
 
 (Thu, 13 Jun 2024 14:50:09 +0900)
-- Return a string value "undefined" when it inspects `undefined`.
-  (not released)
+- The internal `inspect` function returns a string value "undefined" when it
+  inspects `undefined`; note that JSON.stringify returns a `undefined` value not
+  a string value when it receives `undefined` value.  (not released)
 
 
  Conclusion
