@@ -1,6 +1,7 @@
 params: body
 'use strict'
-import { trace_validator } from "vanilla-schema-validator";
+import { trace_validator } from      "vanilla-schema-validator";
+
 
 function inspect(s) {
   return JSON.stringify(
@@ -13,7 +14,7 @@ function inspect(s) {
             return v;
       }
     }, 2
-  ).replace( /"__CONST_UNDEFINED_CONST__"/g, "undefined" ) ;
+  )?.replace?.( /"__CONST_UNDEFINED_CONST__"/g, "undefined" ) ?? "undefined";
 }
 
 

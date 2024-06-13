@@ -764,6 +764,10 @@ fixed the issue that the package could not be loaded; v0.2.34 was broken.
   an error when the specified property does not exist.
   (not released)
 
+(Thu, 13 Jun 2024 14:50:09 +0900)
+- Return a string value "undefined" when it inspects `undefined`.
+  (not released)
+
 
  Conclusion
 --------------------------------------------------------------------------------

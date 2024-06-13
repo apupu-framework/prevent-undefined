@@ -1,5 +1,5 @@
 'use strict'
-const { trace_validator } = require('vanilla-schema-validator');
+const  { trace_validator } = require("vanilla-schema-validator");
 
 // const util = require('util');
 function inspect(s) {
@@ -13,7 +13,7 @@ function inspect(s) {
             return v;
       }
     }, 2
-  ).replace( /"__CONST_UNDEFINED_CONST__"/g, "undefined" ) ;
+  )?.replace?.( /"__CONST_UNDEFINED_CONST__"/g, "undefined" ) ?? "undefined";
   // return JSON.stringify( s, null, 2 );
   // // return util.inspect( s, {
   // //   depth:null,
