@@ -769,6 +769,9 @@ fixed the issue that the package could not be loaded; v0.2.34 was broken.
   inspects `undefined`; note that JSON.stringify returns a `undefined` value not
   a string value when it receives `undefined` value.  (not released)
 
+(Thu, 05 Sep 2024 18:17:04 +0900)
+- The latest version of `prevent-undefined` was released as v3.0.4 on Sep 5 2024.
+
 
  Conclusion
 --------------------------------------------------------------------------------

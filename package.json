@@ -1,6 +1,6 @@
 {
   "name": "prevent-undefined",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "prevent-undefined let you know when your code refers a non-existing propery",
   "main": "index.mjs",
   "type": "module",
